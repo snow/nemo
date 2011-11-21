@@ -5,5 +5,8 @@
 {% block page_id %}index{% endblock %}
 
 {% block bd %}
-meow
+<form action="" method="POST">
+    {{ params.form.as_p }}
+    <input type="submit" value="submit" />
+</form>
 {% endblock %}
