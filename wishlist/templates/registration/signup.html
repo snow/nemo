@@ -1,0 +1,44 @@
+{% extends 'wish/base.html' %}
+
+{% block title %}注册帐号{% endblock %}
+{% block page_title %}注册帐号{% endblock %}
+{% block page_id %}account_signup{% endblock %}
+{% block hd_buttons %}<!--<a class="submit" href="javascript:void(0)">注册</a>-->{% endblock %}
+
+{% block bd %}
+<form action="" method="post" id="signup_form">
+    {{ form.non_field_errors }}
+    <div class="li {% if not form.is_bound %}off{% endif %}">
+        {{ form.username.errors }}
+        {{ form.username.label_tag }}<br />
+        {{ form.username }}
+    </div>
+    <div class="li">
+        {{ form.password1.errors }}
+        {{ form.password1.label_tag }}<br />
+        {{ form.password1 }}
+    </div>
+    <div class="li">
+        {{ form.password2.errors }}
+        {{ form.password2.label_tag }}<br />
+        {{ form.password2 }}
+    </div>
+    {% csrf_token %}
+    <input type="submit" value="注册">
+</form>
+<script>
+(function($){
+    var j_form = $('#signup_form'),
+        j_field = j_form.find('[name=username]'),
+        j_wrapper = j_field.closest('.li'),
+        j_submit = $('#hd .submit');
+        
+    if(j_wrapper.hasClass('off')){
+        j_field.one('focus', function(e){
+            j_field.val('');
+            j_wrapper.removeClass('off');
+        });
+    }    
+})(jQuery);
+</script>
+{% endblock %}

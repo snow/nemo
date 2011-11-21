@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+/*
+ * commons
+ * ----------------
+ */
+.c {clear:both}
+
+/*
+ * components
+ * ----------------
+ */
+.inr.layout {width:960px; margin:0 auto}
+
+.hd.layout {height:44px; line-height:44px; border-bottom:1px solid #111;
+    background:#333}
+    .hd.layout a {text-decoration:none; color:#fff}
+
+    .hd.layout .logo,
+    .hd.layout .logo_lt,
+    .hd.layout .page_title {display:block; float:left; color:#fff}
+
+    .hd.layout .logo {padding:0 5px; font-size:20px}
+    .hd.layout .page_title {margin-left:5px; color:#ccc; font-size:20px}
+
+    .hd.layout .user_info {float:right; color:#ccc}
+    .hd.layout .user_info a {font-size:14px; color:#ccc}
+    
+/*
+ * page specifics
+ * ----------------
+ */

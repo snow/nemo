@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="zh_cn" />
+    <title>{% block title %}Stargazer{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/s/c/reset.css?r=1.0.1" />
+    <link rel="stylesheet" type="text/css" href="/s/c/common.css?r=0.1.0" />
+    <script type="text/javascript" src="/s/s/jquery.min.js?r=1.6.2"></script>
+    <script type="text/javascript" src="/s/s/jquery.ba-bbq.min.js?r=1.2.1"></script>
+    <script type="text/javascript" src="/s/s/common.js?r=0.1.0"></script>
+</head>
+
+<body>
+{% csrf_token %}
+<div id="{% block page_id %}{% endblock %}" class="page">
+    
+    <div class="hd layout">
+        <div class="inr layout">
+            {% block logo %}<a class="logo" href="/">SGZ</a><span class="logo_lt">&lt;</span>{% endblock %}
+            <span class="page_title">{% block page_title %}{% endblock %}</span>
+            
+            <div class="user_info">
+                {% if request.user.is_authenticated %}
+                <span>{{ request.user.username }}</span> | 
+                <a href="/accounts/logout">signout</a>
+                {% else %}
+                <a href="/accounts/login">Signin</a>
+                {% endif %}
+            </div>
+        </div>            
+    </div>
+    
+    <div class="bd layout">
+        <div class="inr layout">
+            {% block bd %}{% endblock %}
+        </div>
+    </div>
+    
+</div>
+</body>
+</html>
