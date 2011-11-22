@@ -4,9 +4,93 @@
 {% block page_title %}Stargazer{% endblock %}
 {% block page_id %}index{% endblock %}
 
-{% block bd %}
-<form action="" method="POST">
+{% block main %}
+<form class="wishform" action="/create/" method="POST">
+    {% csrf_token %}
     {{ params.form.as_p }}
     <input type="submit" value="submit" />
 </form>
+<div class="stream"></div>
+<script>
+(function($){
+    var j_stream = $('.stream'),
+        vote_buffer = {};
+    
+    j_stream.load('/list/');
+    
+    function parse_vote_count(str){
+        var matches = str.match(/\d+/);
+        if(matches){
+            return parseInt(matches[0]);
+        } else {
+            return 0;
+        }
+    }
+    
+    j_stream.delegate('.ay', 'click', function(e){
+        e.preventDefault();
+        var j_t = $(this),
+            sid = j_t.closest('.li').attr('sid'),
+            vote_count = parse_vote_count(j_t.text()),
+            API_URI = '/vote/'+sid+'/';
+            
+        if(3 > vote_count){
+            vote_count += 1;
+            j_t.text('+'+vote_count);
+        } else {
+            vote_count = 0;
+            j_t.text('ay');
+        }
+        
+        try{
+            clearTimeout(vote_buffer[sid]);
+        } catch(e) {}
+        
+        vote_buffer[sid] = setTimeout(function(){
+            n.ajax(API_URI, {
+                data: {'count': vote_count},
+                success: function(data){
+                    if(!data.done){
+                        alert('U dont have only '+data.has+' votes left');
+                    }
+                    location.reload();
+                },
+                dataType: 'json'
+            });
+        }, 500);
+    }).
+    delegate('.negative', 'click', function(e){
+        e.preventDefault();
+        var j_t = $(this),
+            sid = j_t.closest('.li').attr('sid'),
+            vote_count = -parse_vote_count(j_t.text()),
+            API_URI = '/vote/'+sid+'/';
+            
+        if(-3 < vote_count){
+            vote_count -= 1;
+            j_t.text(vote_count);
+        } else {
+            vote_count = 0;
+            j_t.text('ng');
+        }
+        
+        try{
+            clearTimeout(vote_buffer[sid]);
+        } catch(e) {}
+        
+        vote_buffer[sid] = setTimeout(function(){
+            n.ajax(API_URI, {
+                data: {'count': vote_count},
+                success: function(data){
+                    if(!data.done){
+                        alert('U dont have only '+data.has+' votes left');
+                    }
+                    location.reload();
+                },
+                dataType: 'json'
+            });
+        }, 500);
+    });
+})(jQuery);
+</script>
 {% endblock %}

@@ -6,6 +6,8 @@ from wishlist.views import *
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', IndexView.as_view()),
-    url(r'^create/$', CreateWishView.as_view())
+    url(r'^$', IndexV.as_view()),
+    url(r'^create/$', CreateV.as_view()),
+    url(r'^list/$', ListV.as_view()),
+    url(r'^vote/(?P<pk>\d+)/$', VoteV.as_view())
 )

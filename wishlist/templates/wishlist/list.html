@@ -1,0 +1,24 @@
+{% for e in object_list %}
+<div class="li stream-item {% if e.is_liked %}on{% endif %}" sid="{{ e.id }}">
+    <div class="ayes">
+        <div class="count">{{ e.count_ayes }}</div>
+        <a class="ay{% if e.count_user_ayes %} on{% endif %}" href="/ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}Ay{% endif %}</a>
+    </div>
+    
+    <div class="content">{{ e.content }}</div>
+    
+    <div class="meta">
+        <span class="author" href="/user/{{ e.author.id }}/">{{ e.author.username }}</span>
+        <span class="sp">-</span>
+        <span class="time">{{ e.created|timesince }}</span>
+        {% if e.count_negatives %}<span class="sp">-</span>
+        <span class="ng">{{ e.count_negatives }} negatives</span>
+        {% endif %}
+        <span class="oprts">
+            <a class="negative{% if e.count_user_negatives %} on{% endif %}" href="/negative/{{ e.id }}/">{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}ng{% endif %}</a>
+        </span>
+    </div>
+    
+    <div class="c"></div>
+</div>
+{% endfor %}
