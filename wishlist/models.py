@@ -5,7 +5,7 @@ class UserProfileManager(models.Manager):
     '''TODO'''
     def get_by_user(self, user):
         try:
-            u = self.get_query_set().get(pk=user.id)
+            u = self.get_query_set().get(user=user)
         except self.model.DoesNotExist:        
             u = self.model()
             u.user = user
