@@ -10,3 +10,5 @@ sqlite3.db
 logs
 # django webroot
 webroot
+# south migrations
+migrations
