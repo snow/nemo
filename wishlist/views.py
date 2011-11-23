@@ -88,7 +88,7 @@ class ListV(ListView):
         for e in self.queryset:
             if e.author.user == request.user:
                 e.edit_form = WishForm(instance=e)
-            if request.user.is_superuser:
+            if request.user.has_perm('wishlist.response'):
                 e.response_form = ResponseForm(instance=e)    
         
         return super(ListV, self).get(request, *args, **kwargs)

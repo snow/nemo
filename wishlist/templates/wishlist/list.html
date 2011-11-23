@@ -31,7 +31,7 @@
     </div>
     {% endif %}
     
-    {% if request.user.is_superuser %}
+    {% if perms.wishlist.response %}
     <form class="responseform" action="/response/{{ e.id }}/" method="post">
         <div class="status_select">
             <label>status:</label>
@@ -62,7 +62,7 @@
             {% else %}
             <a class="negative signin" href="/accounts/login/">ng</a>
             {% endif %}
-            {% if request.user.is_superuser %}
+            {% if perms.wishlist.response %}
             <a class="response" href="javascript:void(0)">response</a>
             {% endif %}
         </span>

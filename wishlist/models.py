@@ -100,6 +100,11 @@ class Wish(models.Model):
     
     objects = WishManager()
     
+    class Meta:
+        permissions = (
+            ('response', 'could response a wish'),
+        )
+    
     def count_ayes(self):
         return sum([ay.count for ay in Vote.ayes.filter(wish=self)])
     
