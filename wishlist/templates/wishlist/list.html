@@ -1,5 +1,5 @@
 {% for e in object_list %}
-<div class="li stream-item {% if e.is_liked %}on{% endif %}" sid="{{ e.id }}">
+<div class="li stream_li" sid="{{ e.id }}">
     <div class="ayes">
         <div class="count">{{ e.count_ayes }}</div>
         {% if request.user.is_authenticated %}

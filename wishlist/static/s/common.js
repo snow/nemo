@@ -41,7 +41,7 @@
     
     function vote(j_link){
         var vote_count = parse_vote_count(j_link.text()),
-            sid = j_link.closest('.li').attr('sid'),
+            sid = j_link.closest('.stream_li').attr('sid'),
             API_URI = '/vote/'+sid+'/';
             
         if(j_link.hasClass('ay')){
@@ -82,7 +82,7 @@
     }
     
     function edit(j_content){
-        var j_li = j_content.closest('.li'),
+        var j_li = j_content.closest('.stream_li'),
             j_form = j_li.find('form');
             
         j_content.hide();
@@ -112,7 +112,7 @@
             }).
             delegate('.cancel', 'click', function(e){
                 e.preventDefault();
-                cancel_edit($(this).closest('.stream_item'));
+                cancel_edit($(this).closest('.stream_li'));
             });
         
         j_stream.load('/list/');
