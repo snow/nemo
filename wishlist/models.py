@@ -5,13 +5,13 @@ class UserProfileManager(models.Manager):
     '''TODO'''
     def get_by_user(self, user):
         try:
-            u = self.get_query_set().get(user=user)
+            up = self.get_query_set().get(user=user)
         except self.model.DoesNotExist:        
-            u = self.model()
-            u.user = user
-            u.save()
+            up = self.model()
+            up.user = user
+            up.save()
             
-        return u    
+        return up
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -25,7 +25,8 @@ class UserProfile(models.Model):
     
     def vote_left(self):
         return self.vote_limit - \
-            sum([abs(vote.count) for vote in Vote.objects.filter(user=self)])
+            sum([abs(vote.count) 
+                 for vote in Vote.objects.filter(user_profile=self)])
             
     class OutOfVoteException(Exception):
         def __init__(self, has, want, origin):
@@ -35,14 +36,13 @@ class UserProfile(models.Model):
             
     def vote(self, wish, count):        
         try:
-            vote = Vote.objects.filter(wish=wish, user=self).get()
+            vote = Vote.objects.filter(wish=wish, user_profile=self).get()
         except Vote.DoesNotExist:
-            vote = Vote(wish=wish, user=self)
+            vote = Vote(wish=wish, user_profile=self)
             
         if (abs(count) - abs(vote.count)) > self.vote_left():
             raise self.OutOfVoteException(has=self.vote_left(), want=count, 
                                           origin=vote.count)
-        
         vote.count = count
         vote.save()
         
@@ -91,9 +91,9 @@ class Wish(models.Model):
         return sum([ay.count for ay in Vote.ayes.filter(wish=self)])
     
     def count_user_ayes(self):
+        up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
-            return Vote.ayes.filter(wish=self, user=self.current_user).\
-                get().count
+            return Vote.ayes.filter(wish=self, user_profile=up).get().count
         else:
             return 0
         
@@ -102,8 +102,9 @@ class Wish(models.Model):
                     for negative in Vote.negatives.filter(wish=self)]))
     
     def count_user_negatives(self):
+        up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
-            return abs(Vote.negatives.filter(wish=self, user=self.current_user).\
+            return abs(Vote.negatives.filter(wish=self, user_profile=up).\
                 get().count)
         else:
             return 0
@@ -119,7 +120,7 @@ class NegativeManager(models.Manager):
         return super(NegativeManager, self).get_query_set().filter(count__lt=0)    
     
 class Vote(models.Model):
-    user = models.ForeignKey(UserProfile)
+    user_profile = models.ForeignKey(UserProfile)
     wish = models.ForeignKey(Wish)
     count = models.SmallIntegerField(default=0,
                                      choices=[(-3, -3), (-2, -2), (-1, -1), 
