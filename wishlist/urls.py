@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^create/$', login_required(CreateV.as_view())),
     url(r'^update/(?P<pk>\d+)/$', login_required(UpdateV.as_view())),
     url(r'^response/(?P<pk>\d+)/$', 
-        permission_required('wishlist.response')(ResponseV.as_view())),
+        permission_required('wishlist.response_wish')(ResponseV.as_view())),
     url(r'^list/$', ListV.as_view()),
     url(r'^vote/(?P<pk>\d+)/$', login_required(VoteV.as_view()))
 )

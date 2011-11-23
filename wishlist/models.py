@@ -102,7 +102,7 @@ class Wish(models.Model):
     
     class Meta:
         permissions = (
-            ('response', 'could response a wish'),
+            ('response_wish', 'could response a wish'),
         )
     
     def count_ayes(self):
