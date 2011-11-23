@@ -3,6 +3,7 @@
  * commons
  * ----------------
  */
+body {overflow-y:scroll}
 .c {clear:both}
 
 /*
@@ -41,16 +42,20 @@
         .stream .ay:hover {border-color:#666; color:#333}
         .stream .li:hover .ay,
         .stream .ay.on {display:block}
+    .stream .content.editable:hover {background:#eee; cursor:text}
     .stream .meta {margin-top:10px; color:#777; font-size:14px}    
         .stream .meta a {color:#777; text-decoration:none}
             .stream .meta a:hover {color:#333; background:#eee}
             .stream .sp {color:#aaa}
-    .stream .negative {display:none}
-        .stream .li:hover .negative,
-        .stream .negative.on {display:inline}
     .stream .oprts {margin-left:10px}
-        .stream .oprts a {border:1px solid #ccc; padding:2px 8px}
+        .stream .oprts a {display:none; border:1px solid #ccc; padding:2px 8px}
+            .stream .li:hover .oprts a {display:inline}
             .stream .oprts a:hover {border-color:#666;}
+    .stream .negative {display:none}
+        .stream .negative.on {display:inline}
+    .stream .wishform {display:none; border:none}
+        .stream .wishform textarea {width:520px}
+        .stream .wishform a {margin-left:10px; color:#666}            
         
 
 /*

@@ -4,7 +4,7 @@ import json
 import logging
 
 from django.views.generic import View, TemplateView, CreateView, ListView, \
-                                 FormView, DetailView, RedirectView
+                                 FormView, DetailView, RedirectView, UpdateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.forms import ModelForm, Textarea, HiddenInput
 from django.shortcuts import render_to_response
@@ -56,13 +56,25 @@ class CreateV(CreateView):
 
         return super(CreateV, self).form_valid(form)
     
+class UpdateV(UpdateView):    
+    '''TODO'''    
+    form_class = WishForm
+    template_name = 'wishlist/create.html'
+    success_url = '/'
+    model = Wish
+    
 class ListV(ListView):
     '''TODO'''
     template_name = 'wishlist/list.html'
 
     def get(self, request, *args, **kwargs):
-        self.queryset = Wish.objects.with_user(request.user).recent().all()
-
+        # force queryset to be executed 
+        # to make sure subsequnced access pointing to the same object
+        self.queryset = list(Wish.objects.with_user(request.user).recent().all())
+        for e in self.queryset:
+            if e.author.user == request.user:
+                e.form = WishForm(instance=e)
+        
         return super(ListV, self).get(request, *args, **kwargs)
     
 class VoteV(View):

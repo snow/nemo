@@ -2,10 +2,24 @@
 <div class="li stream-item {% if e.is_liked %}on{% endif %}" sid="{{ e.id }}">
     <div class="ayes">
         <div class="count">{{ e.count_ayes }}</div>
+        {% if request.user.is_authenticated %}
         <a class="ay{% if e.count_user_ayes %} on{% endif %}" href="/ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}Ay{% endif %}</a>
+        {% else %}
+        <a class="ay signin" href="/accounts/login/">Ay</a>
+        {% endif %}
+        
     </div>
     
-    <div class="content">{{ e.content }}</div>
+    <div class="content{% if e.author.user == request.user %} editable{% endif %}">{{ e.content }}</div>
+    
+    {% if e.author.user == request.user %}
+    <form class="wishform" action="/update/{{ e.id }}/" method="post">
+        {{ e.form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="submit" />
+        <a class="cancel" href="javascript:void(0)">cancel</a>
+    </form>
+    {% endif %}
     
     <div class="meta">
         <span class="author" href="/user/{{ e.author.id }}/">{{ e.author.username }}</span>
@@ -15,7 +29,11 @@
         <span class="ng">{{ e.count_negatives }} negatives</span>
         {% endif %}
         <span class="oprts">
+            {% if request.user.is_authenticated %}
             <a class="negative{% if e.count_user_negatives %} on{% endif %}" href="/negative/{{ e.id }}/">{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}ng{% endif %}</a>
+            {% else %}
+            <a class="negative signin" href="/accounts/login/">ng</a>
+            {% endif %}
         </span>
     </div>
     
