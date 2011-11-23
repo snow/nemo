@@ -81,6 +81,19 @@ class Wish(models.Model):
     author = models.ForeignKey(UserProfile, related_name='wishes')
     created = models.DateTimeField(auto_now_add=True)
     #duedate = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    STATUS_UNREAD = 0
+    STATUS_READ = 1
+    STATUS_ONGOING = 2
+    STATUS_DONE = 3
+    STATUSES = {
+        STATUS_UNREAD: 'unread',
+        STATUS_READ: 'read',
+        STATUS_ONGOING: 'ongoing',
+        STATUS_DONE: 'done'
+    }
+    
+    status = models.SmallIntegerField(default=0, choices=STATUSES.items())
+    response = models.CharField(max_length=200, blank=True)
 
     votes = models.ManyToManyField(UserProfile, through='Vote', 
                                   related_name='votes')
@@ -108,6 +121,9 @@ class Wish(models.Model):
                 get().count)
         else:
             return 0
+        
+    def status_label(self):
+        return self.STATUSES[self.status]
 
 class AyManager(models.Manager):
     '''TODO'''
@@ -123,8 +139,7 @@ class Vote(models.Model):
     user_profile = models.ForeignKey(UserProfile)
     wish = models.ForeignKey(Wish)
     count = models.SmallIntegerField(default=0,
-                                     choices=[(-3, -3), (-2, -2), (-1, -1), 
-                                              (0, 0), (1, 1), (2, 2), (3, 3)])
+                                     choices=[(i, i) for i in range(-3, 4)])
     updated = models.DateTimeField(auto_now=True)
     
     objects = models.Manager()

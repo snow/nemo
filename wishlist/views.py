@@ -6,7 +6,7 @@ import logging
 from django.views.generic import View, TemplateView, CreateView, ListView, \
                                  FormView, DetailView, RedirectView, UpdateView
 from django.http import HttpResponse, HttpResponseRedirect
-from django.forms import ModelForm, Textarea, HiddenInput
+from django.forms import ModelForm, Textarea, HiddenInput, RadioSelect
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -26,6 +26,13 @@ class WishForm(ModelForm):
     class Meta:
         model = Wish
         fields = ('content',)
+        
+class ResponseForm(ModelForm):
+    '''TODO'''    
+    response = forms.CharField(max_length=140, widget=Textarea, required=False)
+    class Meta:
+        model = Wish
+        fields = ('status', 'response')
 
 class IndexV(TemplateView):
     '''TODO'''
@@ -56,10 +63,17 @@ class CreateV(CreateView):
 
         return super(CreateV, self).form_valid(form)
     
-class UpdateV(UpdateView):    
+class UpdateV(UpdateView):
     '''TODO'''    
     form_class = WishForm
     template_name = 'wishlist/create.html'
+    success_url = '/'
+    model = Wish
+    
+class ResponseV(UpdateView):
+    '''TODO'''    
+    form_class = ResponseForm
+    template_name = 'wishlist/response.html'
     success_url = '/'
     model = Wish
     
@@ -73,7 +87,9 @@ class ListV(ListView):
         self.queryset = list(Wish.objects.with_user(request.user).recent().all())
         for e in self.queryset:
             if e.author.user == request.user:
-                e.form = WishForm(instance=e)
+                e.edit_form = WishForm(instance=e)
+            if request.user.is_superuser:
+                e.response_form = ResponseForm(instance=e)    
         
         return super(ListV, self).get(request, *args, **kwargs)
     

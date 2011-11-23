@@ -83,18 +83,40 @@
     
     function edit(j_content){
         var j_li = j_content.closest('.stream_li'),
-            j_form = j_li.find('form');
+            j_form = j_li.find('.wishform');
             
         j_content.hide();
-        j_form.show();
+        j_form.show().find('textarea').focus();
     }
     
-    function cancel_edit(j_li){
-        var j_content = j_li.find('.content'),
-            j_form = j_li.find('form');
+    function cancel_form(j_link){
+        var j_form = j_link.closest('form'),
+            j_li = j_form.closest('.stream_li'),
+            j_content = j_li.find('.content'),
+            j_status = j_li.find('.status');
             
         j_content.show();
+        j_status.show();
         j_form.hide();
+    }
+    
+    function response(j_link){
+        var j_li = j_link.closest('.stream_li'),
+            j_form = j_li.find('.responseform'),
+            j_response = j_li.find('.status');
+            
+        j_form.show();
+        j_response.hide();
+    }
+    
+    function update_status(j_link){
+        var j_form = j_link.closest('form'),
+            j_select = j_form.find('[name=status]');
+        
+        j_form.find('.status_select .on').removeClass('on');
+        j_link.addClass('on');    
+        j_select.find('option:contains('+j_link.text()+')').attr('selected', 
+                                                                 'selected');
     }
     
     n.stream = {};
@@ -112,7 +134,15 @@
             }).
             delegate('.cancel', 'click', function(e){
                 e.preventDefault();
-                cancel_edit($(this).closest('.stream_li'));
+                cancel_form($(this));
+            }).
+            delegate('.oprts .response', 'click', function(e){
+                e.preventDefault();
+                response($(this));
+            }).
+            delegate('.status_select a', 'click', function(e){
+                e.preventDefault();
+                update_status($(this));
             });
         
         j_stream.load('/list/');

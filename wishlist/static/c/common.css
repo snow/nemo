@@ -30,34 +30,56 @@ body {overflow-y:scroll}
     .hd.layout .user_info a {font-size:14px; color:#ccc}
 
 .wishform {margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #ccc}
-.wishform label {display:none}    
+.wishform label {display:none}
 .wishform textarea {width:584px; height:100px}
 
-.stream .li {margin-bottom:10px; padding:5px 10px 10px 60px; border-bottom:1px solid #ccc}
-    .stream .ayes {float:left; margin-left:-60px; width:50px}
-    .stream .count {text-align:center}
-    .stream .ay {display:none; margin:0 auto; width:40px; 
+form .cancel {margin-left:10px; color:#666}  
+
+.stream_li {margin-bottom:10px; padding:5px 10px 10px 60px; 
+    border-bottom:1px solid #ccc}
+    
+    .stream_li .ayes {float:left; margin-left:-60px; width:50px}
+    .stream_li .count {text-align:center}
+    .stream_li .ay {display:none; margin:0 auto; width:40px; 
         border:1px solid #ccc; background:#eee; color:#666; 
         text-align:center; text-decoration:none}
-        .stream .ay:hover {border-color:#666; color:#333}
-        .stream .li:hover .ay,
-        .stream .ay.on {display:block}
-    .stream .content.editable:hover {background:#eee; cursor:text}
-    .stream .meta {margin-top:10px; color:#777; font-size:14px}    
-        .stream .meta a {color:#777; text-decoration:none}
-            .stream .meta a:hover {color:#333; background:#eee}
-            .stream .sp {color:#aaa}
-    .stream .oprts {margin-left:10px}
-        .stream .oprts a {display:none; border:1px solid #ccc; padding:2px 8px}
-            .stream .li:hover .oprts a {display:inline}
-            .stream .oprts a:hover {border-color:#666;}
-    .stream .negative {display:none}
-        .stream .negative.on {display:inline}
-    .stream .wishform {display:none; border:none}
-        .stream .wishform textarea {width:520px}
-        .stream .wishform a {margin-left:10px; color:#666}            
+        .stream_li .ay:hover {border-color:#666; color:#333}
+        .stream_li:hover .ay,
+        .stream_li .ay.on {display:block}
         
-
+    .stream_li .content.editable:hover {background:#eee; cursor:text}
+    
+    .stream_li .status {margin-top:5px}
+        .stream_li .status .label {float:left; padding:2px 10px; color:#fff; 
+            background:#666}
+        .stream_li .status .response {clear:both; padding:5px 10px; color:#333;
+            background:#eee}
+        
+    .stream_li .meta {margin-top:10px; color:#777; font-size:14px}    
+        .stream_li .meta a {color:#777; text-decoration:none}
+            .stream_li .meta a:hover {color:#333; background:#eee}
+            .stream_li .sp {color:#aaa}
+            
+    .stream_li .oprts {margin-left:10px}
+        .stream_li .oprts a {display:none; border:1px solid #ccc; 
+            padding:2px 8px}
+            .stream_li:hover .oprts a {display:inline}
+            .stream_li .oprts a:hover {border-color:#666;}
+            
+    .stream_li .negative {display:none}
+        .stream_li .negative.on {display:inline}
+        
+    .stream_li form textarea {width:520px}
+    
+    .stream_li .wishform {display:none; border:none}
+    
+    .stream_li .responseform {display:none}
+        .responseform .status_select {padding-left:5px; background:#ccc}
+        .responseform .status_select a {padding:2px 10px; color:#666; 
+            text-decoration:none}
+        .responseform .status_select .on {color:#fff; background:#333}
+        .responseform [name=status] {display:none}
+             
 /*
  * page specifics
  * ----------------
