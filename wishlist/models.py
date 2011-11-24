@@ -76,21 +76,24 @@ class WishManager(models.Manager):
         self._update_query_set(self._get_query_set().order_by('-created'))
         return self
     
+    def top(self):
+        self._update_query_set(self._get_query_set().
+            exclude(status__gte=Wish.STATUS_DONE).order_by('-ayes', 
+                                                           'negatives',
+                                                           '-created'))
+        return self
+    
     def hot(self):
         self._update_query_set(self._get_query_set().
             exclude(status__gte=Wish.STATUS_DONE).order_by('-status', 
+                                                           '-ayes',
+                                                           'negatives',
                                                            '-created'))
         return self
         
     def done(self):
         self._update_query_set(self._get_query_set().
             filter(status=Wish.STATUS_DONE).order_by('-created'))
-        return self
-        
-    def top(self):
-        self._update_query_set(self._get_query_set().order_by('-ayes', 
-                                                              'negatives',
-                                                              '-created'))
         return self
 
     def with_user(self, user):
