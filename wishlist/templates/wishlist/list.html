@@ -21,34 +21,6 @@
     </form>
     {% endif %}
     
-    {% if e.status >= e.STATUS_READ %}
-    <div class="status">
-        <div class="label">{{ e.status_label }}</div>
-        {% if e.response %}
-        <div class="response">{{ e.response }}</div>
-        {% endif %}
-        <div class="c"></div>
-    </div>
-    {% endif %}
-    
-    {% if perms.wishlist.response_wish %}
-    <form class="responseform" action="/response/{{ e.id }}/" method="post">
-        <div class="status_select">
-            <label>status:</label>
-            <a class="read{% if e.status == e.STATUS_READ %} on{% endif %}" href="javascript:void(0)">read</a>
-            <a class="ongoing{% if e.status == e.STATUS_ONGOING %} on{% endif %}" href="javascript:void(0)">ongoing</a>
-            <a class="done{% if e.status == e.STATUS_DONE %} on{% endif %}" href="javascript:void(0)">done</a>
-        </div>
-        {{ e.response_form.status }}
-        {{ e.response_form.response }}
-        {% csrf_token %}
-        <div>
-            <input type="submit" value="submit" />
-            <a class="cancel" href="javascript:void(0)">cancel</a>
-        </div>
-    </form>
-    {% endif %}
-    
     <div class="meta">
         <span class="author" href="/user/{{ e.author.id }}/">{{ e.author.username }}</span>
         <span class="sp">-</span>
@@ -67,6 +39,40 @@
             {% endif %}
         </span>
     </div>
+    
+    {% if e.status >= e.STATUS_READ %}
+    <div class="status">
+        <div class="hd">
+            <div class="label">{{ e.status_label }}</div>
+            {% if e.status_by %}
+            <div class="meta">{{ e.status_by.username }} | {{ e.status_stamp|date:'Y-m-d H:i' }}</div>
+            {% endif %}
+            <div class="c"></div>
+        </div>
+        {% if e.status_message %}
+        <div class="message">{{ e.status_message }}</div>
+        {% endif %}
+        <div class="c"></div>
+    </div>
+    {% endif %}
+    
+    {% if perms.wishlist.response_wish %}
+    <form class="responseform" action="/response/{{ e.id }}/" method="post">
+        <div class="status_select">
+            <label>status:</label>
+            <a class="read{% if e.status == e.STATUS_READ %} on{% endif %}" href="javascript:void(0)">read</a>
+            <a class="ongoing{% if e.status == e.STATUS_ONGOING %} on{% endif %}" href="javascript:void(0)">ongoing</a>
+            <a class="done{% if e.status == e.STATUS_DONE %} on{% endif %}" href="javascript:void(0)">done</a>
+        </div>
+        {{ e.response_form.status }}
+        {{ e.response_form.status_message }}
+        {% csrf_token %}
+        <div>
+            <input type="submit" value="submit" />
+            <a class="cancel" href="javascript:void(0)">cancel</a>
+        </div>
+    </form>
+    {% endif %}
     
     <div class="c"></div>
 </div>

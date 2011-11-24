@@ -29,10 +29,11 @@ class WishForm(ModelForm):
         
 class ResponseForm(ModelForm):
     '''TODO'''    
-    response = forms.CharField(max_length=140, widget=Textarea, required=False)
+    status_message = forms.CharField(max_length=140, widget=Textarea, 
+                                     required=False)
     class Meta:
         model = Wish
-        fields = ('status', 'response')
+        fields = ('status', 'status_message')
 
 class IndexV(TemplateView):
     '''TODO'''
@@ -49,7 +50,7 @@ class CreateV(CreateView):
     '''TODO'''    
     form_class = WishForm
     template_name = 'wishlist/create.html'
-    success_url = '/'
+    success_url = '/all/'
     user = False
 
     def post(self, request, *args, **kwargs):
@@ -67,15 +68,34 @@ class UpdateV(UpdateView):
     '''TODO'''    
     form_class = WishForm
     template_name = 'wishlist/create.html'
-    success_url = '/'
     model = Wish
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.success_url = request.META['HTTP_REFERER']
+        return super(UpdateV, self).dispatch(request, *args, **kwargs)
     
 class ResponseV(UpdateView):
     '''TODO'''    
     form_class = ResponseForm
     template_name = 'wishlist/response.html'
-    success_url = '/'
     model = Wish
+    
+    def post(self, request, *args, **kwargs):
+        wish = self.object = self.get_object()
+        form = self.get_form(self.get_form_class())
+        
+        if form.is_valid():
+            wish.update_status(form.cleaned_data['status'], 
+                               form.cleaned_data['status_message'], 
+                               UserProfile.objects.get_by_user(request.user))
+            wish.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
+        
+    def dispatch(self, request, *args, **kwargs):
+        self.success_url = request.META['HTTP_REFERER']
+        return super(ResponseV, self).dispatch(request, *args, **kwargs)
     
 class ListV(ListView):
     '''TODO'''

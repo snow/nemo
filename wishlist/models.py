@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -117,10 +119,12 @@ class Wish(models.Model):
     }
     
     status = models.SmallIntegerField(default=0, choices=STATUSES.items())
-    response = models.CharField(max_length=200, blank=True)
+    status_message = models.CharField(max_length=200, blank=True)
+    status_stamp = models.DateTimeField(auto_now_add=True)
+    status_by = models.ForeignKey(UserProfile, null=True, blank=True)
 
     votes = models.ManyToManyField(UserProfile, through='Vote', 
-                                  related_name='votes')
+                                   related_name='votes')
     ayes = models.IntegerField(default=0)
     negatives = models.IntegerField(default=0)
     
@@ -157,6 +161,12 @@ class Wish(models.Model):
         
     def status_label(self):
         return self.STATUSES[self.status]
+    
+    def update_status(self, status, message, user_profile):
+        self.status = status        
+        self.status_message = message
+        self.status_by = user_profile
+        self.status_stamp = datetime.now()
 
 class AyManager(models.Manager):
     '''TODO'''
