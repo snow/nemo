@@ -23,6 +23,18 @@
 })(jQuery);
 
 /**
+ * create wish form
+ * -----------------
+ */
+(function($){
+    n.init_create_wish_form = function(j_form){
+        j_form.find('textarea').one('focus', function(){
+            j_form.removeClass('off').find('textarea').empty();
+        });
+    }
+})(jQuery);
+
+/**
  * stream
  * ----------
  */
@@ -145,6 +157,6 @@
                 update_status($(this));
             });
         
-        j_stream.load('/list/');
+        j_stream.load('/list/' + j_stream.attr('type') + '/');
     }    
 })(jQuery);

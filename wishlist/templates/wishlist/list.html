@@ -1,7 +1,7 @@
 {% for e in object_list %}
 <div class="li stream_li" sid="{{ e.id }}">
     <div class="ayes">
-        <div class="count">{{ e.count_ayes }}</div>
+        <div class="count">{{ e.ayes }}</div>
         {% if request.user.is_authenticated %}
         <a class="ay{% if e.count_user_ayes %} on{% endif %}" href="/ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}Ay{% endif %}</a>
         {% else %}
@@ -53,8 +53,8 @@
         <span class="author" href="/user/{{ e.author.id }}/">{{ e.author.username }}</span>
         <span class="sp">-</span>
         <span class="time">{{ e.created|timesince }}</span>
-        {% if e.count_negatives %}<span class="sp">-</span>
-        <span class="ng">{{ e.count_negatives }} negatives</span>
+        {% if e.negatives %}<span class="sp">-</span>
+        <span class="ng">{{ e.negatives }} negatives</span>
         {% endif %}
         <span class="oprts">
             {% if request.user.is_authenticated %}

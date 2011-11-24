@@ -46,6 +46,10 @@ class UserProfile(models.Model):
         vote.count = count
         vote.save()
         
+        wish.count_ayes()
+        wish.count_negatives()
+        wish.save()
+        
         return count      
     
 class WishManager(models.Manager):
@@ -70,6 +74,23 @@ class WishManager(models.Manager):
 
     def recent(self):
         self._update_query_set(self._get_query_set().order_by('-created'))
+        return self
+    
+    def hot(self):
+        self._update_query_set(self._get_query_set().
+            exclude(status__gte=Wish.STATUS_DONE).order_by('-status', 
+                                                           '-created'))
+        return self
+        
+    def done(self):
+        self._update_query_set(self._get_query_set().
+            filter(status=Wish.STATUS_DONE).order_by('-created'))
+        return self
+        
+    def top(self):
+        self._update_query_set(self._get_query_set().order_by('-ayes', 
+                                                              'negatives',
+                                                              '-created'))
         return self
 
     def with_user(self, user):
@@ -97,6 +118,8 @@ class Wish(models.Model):
 
     votes = models.ManyToManyField(UserProfile, through='Vote', 
                                   related_name='votes')
+    ayes = models.IntegerField(default=0)
+    negatives = models.IntegerField(default=0)
     
     objects = WishManager()
     
@@ -106,7 +129,8 @@ class Wish(models.Model):
         )
     
     def count_ayes(self):
-        return sum([ay.count for ay in Vote.ayes.filter(wish=self)])
+        self.ayes = sum([ay.count for ay in Vote.ayes.filter(wish=self)])        
+        return self.ayes
     
     def count_user_ayes(self):
         up = UserProfile.objects.get_by_user(self.current_user)
@@ -116,8 +140,9 @@ class Wish(models.Model):
             return 0
         
     def count_negatives(self):
-        return abs(sum([negative.count 
+        self.negatives = abs(sum([negative.count 
                     for negative in Vote.negatives.filter(wish=self)]))
+        return self.negatives
     
     def count_user_negatives(self):
         up = UserProfile.objects.get_by_user(self.current_user)

@@ -29,9 +29,18 @@ body {overflow-y:scroll}
     .hd.layout .user_info {float:right; color:#ccc}
     .hd.layout .user_info a {font-size:14px; color:#ccc}
 
+.stream_type {float:left; margin-left:20px}
+    .hd .stream_type a {display:block; float:left; padding:0 15px; 
+        border-right:1px solid #222; color:#ccc; text-decoration:none}
+    .hd .stream_type a:first-child {border-left:1px solid #222}
+    .hd .stream_type a:hover {color:#fff}
+    .hd .stream_type .on {background:#222}
+
 .wishform {margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #ccc}
-.wishform label {display:none}
-.wishform textarea {width:584px; height:100px}
+    .wishform label {display:none}
+    .wishform textarea {width:574px; height:6em; padding:5px;}
+    .wishform.off textarea {height:2em; color:#666}
+    .wishform.off [type=submit] {display:none}
 
 form .cancel {margin-left:10px; color:#666}  
 
@@ -47,7 +56,8 @@ form .cancel {margin-left:10px; color:#666}
         .stream_li:hover .ay,
         .stream_li .ay.on {display:block}
         
-    .stream_li .content.editable:hover {background:#eee; cursor:text}
+    .stream_li .content {white-space:pre-wrap}
+        .stream_li .content.editable:hover {background:#eee; cursor:text}
     
     .stream_li .status {margin-top:5px}
         .stream_li .status .label {float:left; padding:2px 10px; color:#fff; 
@@ -69,7 +79,7 @@ form .cancel {margin-left:10px; color:#666}
     .stream_li .negative {display:none}
         .stream_li .negative.on {display:inline}
         
-    .stream_li form textarea {width:520px}
+    .stream_li form textarea {width:510px}
     
     .stream_li .wishform {display:none; border:none}
     
@@ -79,6 +89,7 @@ form .cancel {margin-left:10px; color:#666}
             text-decoration:none}
         .responseform .status_select .on {color:#fff; background:#333}
         .responseform [name=status] {display:none}
+        .responseform textarea {padding:5px; height:6em}
              
 /*
  * page specifics

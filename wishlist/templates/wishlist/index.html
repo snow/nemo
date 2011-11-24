@@ -5,11 +5,12 @@
 {% block page_id %}index{% endblock %}
 
 {% block main %}
-<form class="wishform" action="/create/" method="POST">
+<form class="wishform off" action="/create/" method="POST">
     {% csrf_token %}
     {{ params.form.as_p }}
     <input type="submit" value="submit" />
 </form>
-<div class="stream"></div>
+<script>n.init_create_wish_form($('.wishform.off'))</script>
+<div class="stream" type="{{ params.stream_type }}"></div>
 <script>n.stream.init()</script>
 {% endblock %}

@@ -80,11 +80,22 @@ class ResponseV(UpdateView):
 class ListV(ListView):
     '''TODO'''
     template_name = 'wishlist/list.html'
+    
+    def get_queryset_(self, type, user):
+        if 'hot' == type:
+            return Wish.objects.with_user(user).hot().all()
+        elif 'top' == type:
+            return Wish.objects.with_user(user).top().all()
+        elif 'all' == type:
+            return Wish.objects.with_user(user).recent().all()
+        elif 'done' == type:
+            return Wish.objects.with_user(user).done().all()
 
     def get(self, request, *args, **kwargs):
         # force queryset to be executed 
         # to make sure subsequnced access pointing to the same object
-        self.queryset = list(Wish.objects.with_user(request.user).recent().all())
+        self.queryset = list(self.get_queryset_(kwargs['stream_type'], 
+                                                request.user))
         for e in self.queryset:
             if e.author.user == request.user:
                 e.edit_form = WishForm(instance=e)
