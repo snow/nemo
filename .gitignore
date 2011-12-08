@@ -12,3 +12,4 @@ logs
 webroot
 # south migrations
 migrations
+settings.py
