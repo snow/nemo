@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace these three settings.
-PROJDIR="/repos/workspace/nemo"
+PROJDIR="`pwd`"
 PIDFILE="$PROJDIR/logs/fcgi.pid"
 
 cd $PROJDIR

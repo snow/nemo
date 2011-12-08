@@ -4,7 +4,7 @@ from os.path import dirname, abspath
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-_PROJECT_ROOT = dirname(abspath(__file__))
+PROJECT_ROOT = dirname(abspath(__file__))
 LOGIN_REDIRECT_URL = '/'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -26,7 +26,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': _PROJECT_ROOT + '/sqlite3.db',                      # Or path to database file if using sqlite3.
+        'NAME': PROJECT_ROOT + '/sqlite3.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -70,7 +70,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = _PROJECT_ROOT + '/webroot/s/'
+STATIC_ROOT = PROJECT_ROOT + '/webroot/s/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
