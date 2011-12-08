@@ -79,7 +79,7 @@ form .cancel {margin-left:10px; color:#666}
             background:#666}
         .stream_li .status .meta {float:left; margin:0; padding:0 10px; color:#666; font-size:14px}    
         .stream_li .status .message {clear:both; padding:5px 10px; color:#333;
-            background:#eee}
+            white-space:pre-wrap; background:#eee}
         
     .stream_li form textarea {width:510px}
     

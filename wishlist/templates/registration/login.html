@@ -27,7 +27,7 @@
     {% csrf_token %}
 
     <input type="submit" value="login" />
-    <a href="/accounts/signup?next={{ next }}">Signup</a>
+    <!--<a href="/accounts/signup?next={{ next|default:'/' }}">Signup</a>-->
     <input type="hidden" name="next" value="{{ next }}" />
 </form>
 

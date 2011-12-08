@@ -1,35 +1,27 @@
 # -*- coding: UTF-8 -*-
-import urllib2
 import json
 import logging
 
-from django.views.generic import View, TemplateView, CreateView, ListView, \
-                                 FormView, DetailView, RedirectView, UpdateView
-from django.http import HttpResponse, HttpResponseRedirect
-from django.forms import ModelForm, Textarea, HiddenInput, RadioSelect
-from django.shortcuts import render_to_response
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from django.utils.http import urlquote
-from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.http import HttpResponse, HttpResponseRedirect
+from django.views.generic import View, TemplateView, CreateView, ListView, \
+                                 UpdateView
 
 from wishlist.models import Wish, UserProfile, Vote
 
 l = logging.getLogger(__name__)
 
-class WishForm(ModelForm):
+class WishForm(forms.ModelForm):
     '''TODO'''
     content = forms.CharField(max_length=140, initial='what do u want?', 
-                              widget=Textarea)
+                              widget=forms.Textarea)
     class Meta:
         model = Wish
         fields = ('content',)
         
-class ResponseForm(ModelForm):
+class ResponseForm(forms.ModelForm):
     '''TODO'''    
-    status_message = forms.CharField(max_length=140, widget=Textarea, 
+    status_message = forms.CharField(max_length=140, widget=forms.Textarea, 
                                      required=False)
     class Meta:
         model = Wish
@@ -40,11 +32,9 @@ class IndexV(TemplateView):
     template_name = 'wishlist/index.html'
     
     def get(self, request, *args, **kwargs):
-        kwargs['form'] = WishForm()
-        
+        '''TODO'''
+        kwargs['form'] = WishForm()        
         return super(IndexV, self).get(request, *args, **kwargs)
-        #context = self.get_context_data(**kwargs)
-        #return self.render_to_response(context)
         
 class CreateV(CreateView):    
     '''TODO'''    
@@ -54,11 +44,13 @@ class CreateV(CreateView):
     user = False
 
     def post(self, request, *args, **kwargs):
+        '''TODO'''
         # for passing user to form_valid
         self.user = request.user
         return super(CreateV, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
+        '''TODO'''
         wish = form.instance
         wish.author = UserProfile.objects.get_by_user(self.user)
 
@@ -71,6 +63,7 @@ class UpdateV(UpdateView):
     model = Wish
     
     def dispatch(self, request, *args, **kwargs):
+        '''TODO'''
         self.success_url = request.META['HTTP_REFERER']
         return super(UpdateV, self).dispatch(request, *args, **kwargs)
     
@@ -81,6 +74,7 @@ class ResponseV(UpdateView):
     model = Wish
     
     def post(self, request, *args, **kwargs):
+        '''TODO'''
         wish = self.object = self.get_object()
         form = self.get_form(self.get_form_class())
         
@@ -94,6 +88,7 @@ class ResponseV(UpdateView):
             return self.form_invalid(form)
         
     def dispatch(self, request, *args, **kwargs):
+        '''TODO'''
         self.success_url = request.META['HTTP_REFERER']
         return super(ResponseV, self).dispatch(request, *args, **kwargs)
     
@@ -102,6 +97,7 @@ class ListV(ListView):
     template_name = 'wishlist/list.html'
     
     def get_queryset_(self, type, user):
+        '''TODO'''
         if 'hot' == type:
             return Wish.objects.with_user(user).hot().all()
         elif 'top' == type:
@@ -112,6 +108,7 @@ class ListV(ListView):
             return Wish.objects.with_user(user).done().all()
 
     def get(self, request, *args, **kwargs):
+        '''TODO'''
         # force queryset to be executed 
         # to make sure subsequnced access pointing to the same object
         self.queryset = list(self.get_queryset_(kwargs['stream_type'], 
@@ -127,6 +124,7 @@ class ListV(ListView):
 class VoteV(View):
     '''TODO'''
     def post(self, request, *args, **kwargs):
+        '''TODO'''
         user = UserProfile.objects.get_by_user(request.user)
         wish = Wish.objects.get(pk=kwargs['pk'])
         try:

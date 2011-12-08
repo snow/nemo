@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class UserProfileManager(models.Manager):
     '''TODO'''
     def get_by_user(self, user):
+        '''TODO'''
         try:
             up = self.get_query_set().get(user=user)
         except self.model.DoesNotExist:        
@@ -17,26 +18,31 @@ class UserProfileManager(models.Manager):
 
 # Create your models here.
 class UserProfile(models.Model):
+    '''TODO'''
     user = models.ForeignKey(User, unique=True)
     vote_limit = 10
     
     objects = UserProfileManager()
     
     def username(self):
+        '''TODO'''
         return self.user.username
     
     def vote_left(self):
+        '''TODO'''
         return self.vote_limit - \
             sum([abs(vote.count) 
                  for vote in Vote.objects.filter(user_profile=self)])
             
     class OutOfVoteException(Exception):
+        '''TODO'''
         def __init__(self, has, want, origin):
             self.has = has
             self.want = want
             self.origin = origin
             
-    def vote(self, wish, count):        
+    def vote(self, wish, count):  
+        '''TODO'''      
         try:
             vote = Vote.objects.filter(wish=wish, user_profile=self).get()
         except Vote.DoesNotExist:
@@ -55,18 +61,22 @@ class UserProfile(models.Model):
         return count      
     
 class WishManager(models.Manager):
+    '''TODO'''
     _queryset = None
 
     def _get_query_set(self):
+        '''TODO'''
         if None is self._queryset:
             self._queryset = super(WishManager, self).get_query_set()
 
         return self._queryset
 
     def _update_query_set(self, queryset):
+        '''TODO'''
         self._queryset = queryset
 
     def get_query_set(self):
+        '''TODO'''
         if None is self._queryset:
             return super(WishManager, self).get_query_set()
         else:
@@ -75,10 +85,12 @@ class WishManager(models.Manager):
             return tmp
 
     def recent(self):
+        '''TODO'''
         self._update_query_set(self._get_query_set().order_by('-created'))
         return self
     
     def top(self):
+        '''TODO'''
         self._update_query_set(self._get_query_set().
             exclude(status__gte=Wish.STATUS_DONE).order_by('-ayes', 
                                                            'negatives',
@@ -86,6 +98,7 @@ class WishManager(models.Manager):
         return self
     
     def hot(self):
+        '''TODO'''
         self._update_query_set(self._get_query_set().
             exclude(status__gte=Wish.STATUS_DONE).order_by('-status', 
                                                            '-ayes',
@@ -94,15 +107,18 @@ class WishManager(models.Manager):
         return self
         
     def done(self):
+        '''TODO'''
         self._update_query_set(self._get_query_set().
             filter(status=Wish.STATUS_DONE).order_by('-created'))
         return self
 
     def with_user(self, user):
+        '''TODO'''
         self.model.current_user = user
         return self
     
 class Wish(models.Model):
+    '''TODO'''
     content = models.CharField(max_length=200)
     author = models.ForeignKey(UserProfile, related_name='wishes')
     created = models.DateTimeField(auto_now_add=True)
@@ -136,10 +152,12 @@ class Wish(models.Model):
         )
     
     def count_ayes(self):
+        '''TODO'''
         self.ayes = sum([ay.count for ay in Vote.ayes.filter(wish=self)])        
         return self.ayes
     
     def count_user_ayes(self):
+        '''TODO'''
         up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
             return Vote.ayes.filter(wish=self, user_profile=up).get().count
@@ -147,11 +165,13 @@ class Wish(models.Model):
             return 0
         
     def count_negatives(self):
+        '''TODO'''
         self.negatives = abs(sum([negative.count 
                     for negative in Vote.negatives.filter(wish=self)]))
         return self.negatives
     
     def count_user_negatives(self):
+        '''TODO'''
         up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
             return abs(Vote.negatives.filter(wish=self, user_profile=up).\
@@ -160,9 +180,11 @@ class Wish(models.Model):
             return 0
         
     def status_label(self):
+        '''TODO'''
         return self.STATUSES[self.status]
     
     def update_status(self, status, message, user_profile):
+        '''TODO'''
         self.status = status        
         self.status_message = message
         self.status_by = user_profile
@@ -171,14 +193,17 @@ class Wish(models.Model):
 class AyManager(models.Manager):
     '''TODO'''
     def get_query_set(self):
+        '''TODO'''
         return super(AyManager, self).get_query_set().filter(count__gt=0)
     
 class NegativeManager(models.Manager):
     '''TODO'''
     def get_query_set(self):
+        '''TODO'''
         return super(NegativeManager, self).get_query_set().filter(count__lt=0)    
     
 class Vote(models.Model):
+    '''TODO'''
     user_profile = models.ForeignKey(UserProfile)
     wish = models.ForeignKey(Wish)
     count = models.SmallIntegerField(default=0,
