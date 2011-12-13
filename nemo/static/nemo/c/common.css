@@ -1,0 +1,99 @@
+@CHARSET "UTF-8";
+/*
+ * commons
+ * ----------------
+ */
+body {overflow-y:scroll}
+.c {clear:both}
+
+/*
+ * components
+ * ----------------
+ */
+.inr.layout {width:960px; margin:0 auto}
+.main.layout {float:left; width:590px; border-right:1px solid #ccc; 
+    padding:10px 10px 50px 0}
+.sidebar.layout {float:right; width:350px;}
+
+.hd.layout {height:44px; line-height:44px; border-bottom:1px solid #111;
+    background:#333}
+    .hd.layout a {text-decoration:none; color:#fff}
+
+    .hd.layout .logo,
+    .hd.layout .logo_lt,
+    .hd.layout .page_title {display:block; float:left; color:#fff}
+
+    .hd.layout .logo {padding:0 5px; font-size:20px}
+    .hd.layout .page_title {color:#ccc; font-size:20px}
+
+    .hd.layout .user_info {float:right; color:#ccc}
+    .hd.layout .user_info a {font-size:14px; color:#ccc}
+
+.stream_type {float:left; margin-left:20px}
+    .hd .stream_type a {display:block; float:left; padding:0 15px; 
+        border-right:1px solid #222; color:#ccc; text-decoration:none}
+    .hd .stream_type a:first-child {border-left:1px solid #222}
+    .hd .stream_type a:hover {color:#fff}
+    .hd .stream_type .on {background:#222}
+
+.wishform {margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #ccc}
+    .wishform label {display:none}
+    .wishform textarea {width:574px; height:6em; padding:5px;}
+    .wishform.off textarea {height:2em; color:#666}
+    .wishform.off [type=submit] {display:none}
+
+form .cancel {margin-left:10px; color:#666}  
+
+.stream_li {margin-bottom:10px; padding:5px 10px 10px 60px; 
+    border-bottom:1px solid #ccc}
+    
+    .stream_li .ayes {float:left; margin-left:-60px; width:50px}
+    .stream_li .count {text-align:center}
+    .stream_li .ay {display:none; margin:0 auto; width:40px; 
+        border:1px solid #ccc; background:#eee; color:#666; 
+        text-align:center; text-decoration:none}
+        .stream_li .ay:hover {border-color:#666; color:#333}
+        .stream_li:hover .ay,
+        .stream_li .ay.on {display:block}
+        
+    .stream_li .content {white-space:pre-wrap}
+        .stream_li .content.editable:hover {background:#eee; cursor:text}
+        
+    .stream_li .meta {margin-top:10px; color:#777; font-size:14px}    
+        .stream_li .meta a {color:#777; text-decoration:none}
+            .stream_li .meta a:hover {color:#333; background:#eee}
+            .stream_li .sp {color:#aaa}
+            
+    .stream_li .oprts {margin-left:10px}
+        .stream_li .oprts a {display:none; border:1px solid #ccc; 
+            padding:2px 8px}
+            .stream_li:hover .oprts a {display:inline}
+            .stream_li .oprts a:hover {border-color:#666;}
+            
+    .stream_li .negative {display:none}
+        .stream_li .negative.on {display:inline}
+    
+    .stream_li .status {margin-top:10px}
+        .stream_li .status .hd {height:28px; line-height:28px; background:#ddd}
+        .stream_li .status .label {float:left; padding:0 10px; color:#fff; 
+            background:#666}
+        .stream_li .status .meta {float:left; margin:0; padding:0 10px; color:#666; font-size:14px}    
+        .stream_li .status .message {clear:both; padding:5px 10px; color:#333;
+            white-space:pre-wrap; background:#eee}
+        
+    .stream_li form textarea {width:510px}
+    
+    .stream_li .wishform {display:none; border:none}
+    
+    .stream_li .responseform {display:none; margin-top:10px}
+        .responseform .status_select {padding-left:5px; background:#ddd}
+        .responseform .status_select a {padding:2px 10px; color:#666; 
+            text-decoration:none}
+        .responseform .status_select .on {color:#fff; background:#333}
+        .responseform [name=status] {display:none}
+        .responseform textarea {padding:5px; height:6em}
+             
+/*
+ * page specifics
+ * ----------------
+ */

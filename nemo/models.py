@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django import forms
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -20,7 +21,7 @@ class UserProfileManager(models.Manager):
 class UserProfile(models.Model):
     '''TODO'''
     user = models.ForeignKey(User, unique=True)
-    vote_limit = 10
+    VOTE_LIMIT = 10
     
     objects = UserProfileManager()
     
@@ -30,9 +31,9 @@ class UserProfile(models.Model):
     
     def vote_left(self):
         '''TODO'''
-        return self.vote_limit - \
+        return self.VOTE_LIMIT - \
             sum([abs(vote.count) 
-                 for vote in Vote.objects.filter(user_profile=self)])
+                 for vote in Vote.objects.filter(user=self.user)])
             
     class OutOfVoteException(Exception):
         '''TODO'''
@@ -44,9 +45,9 @@ class UserProfile(models.Model):
     def vote(self, wish, count):  
         '''TODO'''      
         try:
-            vote = Vote.objects.filter(wish=wish, user_profile=self).get()
+            vote = Vote.objects.filter(wish=wish, user=self.user).get()
         except Vote.DoesNotExist:
-            vote = Vote(wish=wish, user_profile=self)
+            vote = Vote(wish=wish, user=self.user)
             
         if (abs(count) - abs(vote.count)) > self.vote_left():
             raise self.OutOfVoteException(has=self.vote_left(), want=count, 
@@ -120,7 +121,7 @@ class WishManager(models.Manager):
 class Wish(models.Model):
     '''TODO'''
     content = models.CharField(max_length=200)
-    author = models.ForeignKey(UserProfile, related_name='wishes')
+    author = models.ForeignKey(User, related_name='nemo_wishes')
     created = models.DateTimeField(auto_now_add=True)
     #duedate = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     STATUS_UNREAD = 0
@@ -137,10 +138,10 @@ class Wish(models.Model):
     status = models.SmallIntegerField(default=0, choices=STATUSES.items())
     status_message = models.CharField(max_length=200, blank=True)
     status_stamp = models.DateTimeField(auto_now_add=True)
-    status_by = models.ForeignKey(UserProfile, null=True, blank=True)
+    status_by = models.ForeignKey(User, null=True, blank=True)
 
-    votes = models.ManyToManyField(UserProfile, through='Vote', 
-                                   related_name='votes')
+    votes = models.ManyToManyField(User, through='Vote', 
+                                   related_name='nemo_votes')
     ayes = models.IntegerField(default=0)
     negatives = models.IntegerField(default=0)
     
@@ -158,9 +159,9 @@ class Wish(models.Model):
     
     def count_user_ayes(self):
         '''TODO'''
-        up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
-            return Vote.ayes.filter(wish=self, user_profile=up).get().count
+            return Vote.ayes.filter(wish=self, 
+                                    user=self.current_user).get().count
         else:
             return 0
         
@@ -172,10 +173,10 @@ class Wish(models.Model):
     
     def count_user_negatives(self):
         '''TODO'''
-        up = UserProfile.objects.get_by_user(self.current_user)
         if self.current_user:
-            return abs(Vote.negatives.filter(wish=self, user_profile=up).\
-                get().count)
+            return abs(Vote.negatives.filter(wish=self, 
+                                             user=self.current_user).\
+                                      get().count)
         else:
             return 0
         
@@ -183,12 +184,28 @@ class Wish(models.Model):
         '''TODO'''
         return self.STATUSES[self.status]
     
-    def update_status(self, status, message, user_profile):
+    def update_status(self, status, message, user):
         '''TODO'''
         self.status = status        
         self.status_message = message
-        self.status_by = user_profile
+        self.status_by = user
         self.status_stamp = datetime.now()
+        
+class WishForm(forms.ModelForm):
+    '''TODO'''
+    content = forms.CharField(max_length=140, initial='what do u want?', 
+                              widget=forms.Textarea)
+    class Meta:
+        model = Wish
+        fields = ('content',)
+        
+class ResponseForm(forms.ModelForm):
+    '''TODO'''    
+    status_message = forms.CharField(max_length=140, widget=forms.Textarea, 
+                                     required=False)
+    class Meta:
+        model = Wish
+        fields = ('status', 'status_message')        
 
 class AyManager(models.Manager):
     '''TODO'''
@@ -204,10 +221,11 @@ class NegativeManager(models.Manager):
     
 class Vote(models.Model):
     '''TODO'''
-    user_profile = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
     wish = models.ForeignKey(Wish)
     count = models.SmallIntegerField(default=0,
                                      choices=[(i, i) for i in range(-3, 4)])
+    created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
     objects = models.Manager()
