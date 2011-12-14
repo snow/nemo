@@ -13,10 +13,10 @@ class IndexV(gv.TemplateView):
     '''Render index'''
     template_name = 'nemo/index.html'
     
-    def get(self, request, stream_type='hot', *args, **kwargs):
+    def get(self, request, stream_type, *args, **kwargs):
         '''TODO'''
         kwargs['form'] = nemo.WishForm()
-        kwargs['stream_type'] = stream_type
+        kwargs['stream_type'] = stream_type or 'hot'
         return super(IndexV, self).get(request, *args, **kwargs)
         
 class CreateV(gv.CreateView):    
@@ -38,11 +38,19 @@ class UpdateV(gv.UpdateView):
     template_name = 'nemo/create.html'
     model = nemo.Wish
     
-    def dispatch(self, request, *args, **kwargs):
-        '''override to set success_url'''
-        self.success_url = request.META.get('HTTP_REFERER', 
-                                            settings.NEMO_URI_ROOT)
-        return super(UpdateV, self).dispatch(request, *args, **kwargs)
+    def form_valid(self, form):
+        self.object = form.save()
+        
+        if self.request.is_ajax():
+            pk = int(self.object.id)
+            self.success_url = '{}list/all/since{}/till{}/'.\
+                                    format(settings.NEMO_URI_ROOT,
+                                           pk-1, pk+1)
+        else:
+            self.success_url = self.request.META.get('HTTP_REFERER', 
+                                                     settings.NEMO_URI_ROOT)
+            
+        return super(UpdateV, self).form_valid(form)
     
 class ResponseV(gv.UpdateView):
     '''Reponse to a wish'''    
@@ -50,48 +58,54 @@ class ResponseV(gv.UpdateView):
     template_name = 'nemo/response.html'
     model = nemo.Wish
     
-    def post(self, request, *args, **kwargs):
-        '''TODO'''
-        wish = self.object = self.get_object()
-        form = self.get_form(self.get_form_class())
+    def form_valid(self, form):
+        self.object.update_status(form.cleaned_data['status'], 
+                                  form.cleaned_data['status_message'], 
+                                  self.request.user)
+        self.object.save()
         
-        if form.is_valid():
-            wish.update_status(form.cleaned_data['status'], 
-                               form.cleaned_data['status_message'], 
-                               request.user)
-            wish.save()
-            return HttpResponseRedirect(self.get_success_url())
+        if self.request.is_ajax():
+            pk = int(self.object.id)
+            self.success_url = '{}list/all/since{}/till{}/'.\
+                                    format(settings.NEMO_URI_ROOT,
+                                           pk-1, pk+1)
         else:
-            return self.form_invalid(form)
-        
-    def dispatch(self, request, *args, **kwargs):
-        '''TODO'''
-        # why separete this from post()?
-        self.success_url = request.META.get('HTTP_REFERER', 
-                                            settings.NEMO_URI_ROOT)
-        return super(ResponseV, self).dispatch(request, *args, **kwargs)
+            self.success_url = self.request.META.get('HTTP_REFERER', 
+                                                     settings.NEMO_URI_ROOT)
+            
+        return super(ResponseV, self).form_valid(form)
+
     
 class ListV(gv.ListView):
     '''TODO'''
     template_name = 'nemo/list.html'
     
-    def get_queryset_(self, type, user):
+    def get_queryset_(self, type, user, since, till):
         '''TODO'''
         # why cant override get_queryset()?
         if 'hot' == type:
-            return nemo.Wish.objects.with_user(user).hot().all()
+            qs = nemo.Wish.objects.with_user(user).hot()
         elif 'top' == type:
-            return nemo.Wish.objects.with_user(user).top().all()
+            qs = nemo.Wish.objects.with_user(user).top()
         elif 'all' == type:
-            return nemo.Wish.objects.with_user(user).recent().all()
+            qs = nemo.Wish.objects.with_user(user).recent()
         elif 'done' == type:
-            return nemo.Wish.objects.with_user(user).done().all()
+            qs = nemo.Wish.objects.with_user(user).done()
+    
+        if since:
+            qs = qs.filter(id__gt=since)
+            
+        if till:
+            qs = qs.filter(id__lt=till)
+            
+        return qs.all()
 
-    def get(self, request, stream_type='hot', *args, **kwargs):
+    def get(self, request, stream_type, since, till, *args, **kwargs):
         '''TODO'''
         # force queryset to be executed 
         # to make sure subsequnced access pointing to the same object
-        self.queryset = list(self.get_queryset_(stream_type, request.user))
+        self.queryset = list(self.get_queryset_(stream_type, request.user, 
+                                                since, till))
         for e in self.queryset:
             if e.author == request.user:
                 e.edit_form = nemo.WishForm(instance=e)
@@ -113,4 +127,8 @@ class VoteV(gv.View):
         else:
             resp = dict(done=True, count=count)
             
-        return HttpResponse(json.dumps(resp), content_type='application/json')
+        #return HttpResponse(json.dumps(resp), content_type='application/json')
+        pk = int(pk)
+        go_to = '{}list/all/since{}/till{}/'.format(settings.NEMO_URI_ROOT,
+                                                    pk-1, pk+1)
+        return HttpResponseRedirect(go_to)

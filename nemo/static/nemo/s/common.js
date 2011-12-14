@@ -70,12 +70,9 @@
                 type: 'POST',
                 data: {'count': vote_count},
                 success: function(data){
-                    if(!data.done){
-                        alert('U dont have only '+data.has+' votes left');
-                    }
-                    location.reload();
+                    j_link.closest('.stream_li').replaceWith(data);
                 },
-                dataType: 'json'
+                dataType: 'html'
             });
         }, 500);
     }
@@ -97,6 +94,20 @@
         j_content.show();
         j_status.show();
         j_form.hide();
+    }
+    
+    function hijax_form_submit(evt){
+        evt.preventDefault();
+        var j_form = $(evt.target);
+        
+        $.ajax(j_form.attr('action'), {
+            type: 'POST',
+            dataType: 'html',
+            data: j_form.serialize(),
+            success: function(data){
+                j_form.closest('.stream_li').replaceWith(data);
+            }
+        });
     }
     
     function response(j_link){
@@ -142,7 +153,8 @@
             delegate('.status_select a', 'click', function(e){
                 e.preventDefault();
                 update_status($(this));
-            });
+            }).
+            delegate('.wishform, .responseform', 'submit', hijax_form_submit);
         
         j_stream.load(nemo.uri_root+'list/' + j_stream.attr('type') + '/');
     }    
