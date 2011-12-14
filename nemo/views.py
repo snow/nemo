@@ -9,6 +9,29 @@ import django.views.generic as gv
 
 import nemo.models as nemo
 
+class RedirectMixin():
+    '''Nemo's redirect business logic'''
+    
+    @classmethod
+    def _get_html_chunk_uri(cls, id):
+        id = int(id)
+        return '{}list/all/since{}/till{}/'.format(settings.NEMO_URI_ROOT, 
+                                                   id-1, id+1)
+        
+    def get_html_chunk_uri(self):
+        return self._get_html_chunk_uri(self.object.id)
+        
+    def get_back_uri(self):
+        return self.request.META.get('HTTP_REFERER', settings.NEMO_URI_ROOT)
+    
+    def get_success_url(self):
+        if self.request.is_ajax():
+            self.success_url = self.get_html_chunk_uri()
+        else:
+            self.success_url = self.get_back_uri()
+            
+        return self.success_url    
+
 class IndexV(gv.TemplateView):
     '''Render index'''
     template_name = 'nemo/index.html'
@@ -32,27 +55,14 @@ class CreateV(gv.CreateView):
 
         return super(CreateV, self).form_valid(form)
     
-class UpdateV(gv.UpdateView):
+class UpdateV(RedirectMixin, gv.UpdateView):
     '''update wish content'''    
     form_class = nemo.WishForm
     template_name = 'nemo/create.html'
     model = nemo.Wish
-    
-    def form_valid(self, form):
-        self.object = form.save()
         
-        if self.request.is_ajax():
-            pk = int(self.object.id)
-            self.success_url = '{}list/all/since{}/till{}/'.\
-                                    format(settings.NEMO_URI_ROOT,
-                                           pk-1, pk+1)
-        else:
-            self.success_url = self.request.META.get('HTTP_REFERER', 
-                                                     settings.NEMO_URI_ROOT)
-            
-        return super(UpdateV, self).form_valid(form)
     
-class ResponseV(gv.UpdateView):
+class ResponseV(RedirectMixin, gv.UpdateView):
     '''Reponse to a wish'''    
     form_class = nemo.ResponseForm
     template_name = 'nemo/response.html'
@@ -63,18 +73,9 @@ class ResponseV(gv.UpdateView):
                                   form.cleaned_data['status_message'], 
                                   self.request.user)
         self.object.save()
-        
-        if self.request.is_ajax():
-            pk = int(self.object.id)
-            self.success_url = '{}list/all/since{}/till{}/'.\
-                                    format(settings.NEMO_URI_ROOT,
-                                           pk-1, pk+1)
-        else:
-            self.success_url = self.request.META.get('HTTP_REFERER', 
-                                                     settings.NEMO_URI_ROOT)
             
         return super(ResponseV, self).form_valid(form)
-
+    
     
 class ListV(gv.ListView):
     '''TODO'''
@@ -114,7 +115,7 @@ class ListV(gv.ListView):
         
         return super(ListV, self).get(request, *args, **kwargs)
     
-class VoteV(gv.View):
+class VoteV(RedirectMixin, gv.View):
     '''TODO'''
     def post(self, request, pk, *args, **kwargs):
         '''TODO'''
@@ -128,7 +129,4 @@ class VoteV(gv.View):
             resp = dict(done=True, count=count)
             
         #return HttpResponse(json.dumps(resp), content_type='application/json')
-        pk = int(pk)
-        go_to = '{}list/all/since{}/till{}/'.format(settings.NEMO_URI_ROOT,
-                                                    pk-1, pk+1)
-        return HttpResponseRedirect(go_to)
+        return HttpResponseRedirect(RedirectMixin._get_html_chunk_uri(pk))
