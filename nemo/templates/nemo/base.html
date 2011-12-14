@@ -35,9 +35,9 @@
             <div class="user_info">
                 {% if request.user.is_authenticated %}
                 <span>{{ request.user.username }}</span> | 
-                <a href="/accounts/logout">signout</a>
+                <a href="/accounts/logout/?next_page=/nemo/&redirect_field_name=next_page">signout</a>
                 {% else %}
-                <a href="/accounts/login">Signin</a>
+                <a href="/accounts/login/?next=/nemo/&redirect_field_name=next">Signin</a>
                 {% endif %}
             </div>
         </div>            
