@@ -5,9 +5,5 @@
 {% block page_id %}response_wish{% endblock %}
 
 {% block bd %}
-<form action="" method="POST">
-    {{ form.as_p }}
-    {% csrf_token %}
-    <input type="submit" value="submit" />
-</form>
+{% include 'nemo/response_form.html' with form=form %}
 {% endblock %}

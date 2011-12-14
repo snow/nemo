@@ -40,52 +40,9 @@ class IndexV(gv.TemplateView):
         '''TODO'''
         kwargs['form'] = nemo.WishForm()
         kwargs['stream_type'] = stream_type or 'hot'
+        
         return super(IndexV, self).get(request, *args, **kwargs)
         
-class CreateV(RedirectMixin, gv.CreateView):    
-    '''Create a wish'''    
-    form_class = nemo.WishForm
-    template_name = 'nemo/create.html'
-    
-    def form_valid(self, form):
-        '''override to set author'''
-        form.instance.author = self.request.user
-        self.object = form.save()
-        
-        if self.request.is_ajax():
-            self.success_url = self.get_html_chunk_uri()
-        else:
-            self.success_url = settings.NEMO_URI_ROOT + 'all/'
-            
-        return HttpResponseRedirect(self.success_url)        
-        
-#        wish = form.instance
-#        wish.author = self.request.user
-#
-#        return super(CreateV, self).form_valid(form)
-    
-class UpdateV(RedirectMixin, gv.UpdateView):
-    '''update wish content'''    
-    form_class = nemo.WishForm
-    template_name = 'nemo/create.html'
-    model = nemo.Wish
-        
-    
-class ResponseV(RedirectMixin, gv.UpdateView):
-    '''Reponse to a wish'''    
-    form_class = nemo.ResponseForm
-    template_name = 'nemo/response.html'
-    model = nemo.Wish
-    
-    def form_valid(self, form):
-        self.object.update_status(form.cleaned_data['status'], 
-                                  form.cleaned_data['status_message'], 
-                                  self.request.user)
-        self.object.save()
-            
-        return super(ResponseV, self).form_valid(form)
-    
-    
 class ListV(gv.ListView):
     '''TODO'''
     template_name = 'nemo/list.html'
@@ -122,8 +79,38 @@ class ListV(gv.ListView):
             if request.user.has_perm('nemo.response_wish'):
                 e.response_form = nemo.ResponseForm(instance=e)    
         
-        return super(ListV, self).get(request, *args, **kwargs)
+        return super(ListV, self).get(request, *args, **kwargs)        
+        
+class CreateV(RedirectMixin, gv.CreateView):    
+    '''Create a wish'''    
+    form_class = nemo.WishForm
     
+    def dispatch(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            self.template_name = 'nemo/create.html'
+        # else use default wish_form.html
+            
+        return super(CreateV, self).dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        '''override to set author'''
+        form.instance.author = self.request.user
+        self.object = form.save()
+        
+        if self.request.is_ajax():
+            self.success_url = self.get_html_chunk_uri()
+        else:
+            self.success_url = settings.NEMO_URI_ROOT + 'all/'
+            
+        return HttpResponseRedirect(self.success_url)
+    
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return self.render_to_response(self.get_context_data(form=form),
+                                           status=403)
+        else:
+            return super(CreateV, self).form_invalid(form)
+
 class VoteV(RedirectMixin, gv.View):
     '''TODO'''
     def post(self, request, pk, *args, **kwargs):
@@ -133,9 +120,58 @@ class VoteV(RedirectMixin, gv.View):
         try:
             count = user.vote(wish, int(request.POST['count']))
         except nemo.UserProfile.OutOfVoteException as e:
-            resp = dict(done=False, has=e.has, want=e.want, origin=e.origin)
+            return HttpResponse(json.dumps(dict(done=False, has=e.has, 
+                                                want=e.want, origin=e.origin)),
+                                status=403,
+                                content_type='application/json')
         else:
-            resp = dict(done=True, count=count)
+            return HttpResponseRedirect(RedirectMixin._get_html_chunk_uri(pk))
+         
+class UpdateV(RedirectMixin, gv.UpdateView):
+    '''update wish content'''    
+    form_class = nemo.WishForm
+    model = nemo.Wish
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            self.template_name = 'nemo/create.html'
+        # else use default wish_form.html
             
-        #return HttpResponse(json.dumps(resp), content_type='application/json')
-        return HttpResponseRedirect(RedirectMixin._get_html_chunk_uri(pk))
+        return super(UpdateV, self).dispatch(request, *args, **kwargs)
+    
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return self.render_to_response(self.get_context_data(form=form),
+                                           status=403)
+        else:
+            return super(UpdateV, self).form_invalid(form)
+        
+    
+class ResponseV(RedirectMixin, gv.UpdateView):
+    '''Reponse to a wish'''    
+    form_class = nemo.ResponseForm
+    model = nemo.Wish
+    
+    def dispatch(self, request, *args, **kwargs):
+        if request.is_ajax():
+            self.template_name = 'nemo/response_form.html'
+        else:
+            self.template_name = 'nemo/response.html'
+            
+        return super(ResponseV, self).dispatch(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        self.object.update_status(form.cleaned_data['status'], 
+                                  form.cleaned_data['status_message'], 
+                                  self.request.user)
+        self.object.save()
+            
+        return super(ResponseV, self).form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return self.render_to_response(self.get_context_data(form=form),
+                                           status=403)
+        else:
+            return super(ResponseV, self).form_invalid(form)
+        

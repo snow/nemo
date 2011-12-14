@@ -193,16 +193,28 @@ class Wish(models.Model):
         
 class WishForm(forms.ModelForm):
     '''TODO'''
-    content = forms.CharField(max_length=140, initial='what do u want?', 
+    content = forms.CharField(max_length=140, initial='what do u want?',
+                              error_messages={
+                                  'required': 'Could not understand a wish '+\
+                                              'with no words'
+                              }, 
                               widget=forms.Textarea)
+    
+    def __init__(self, *args, **kwargs):
+        super(WishForm, self).__init__(auto_id=False, *args, **kwargs)
+        
     class Meta:
         model = Wish
         fields = ('content',)
         
 class ResponseForm(forms.ModelForm):
-    '''TODO'''    
+    '''TODO'''
     status_message = forms.CharField(max_length=140, widget=forms.Textarea, 
                                      required=False)
+    
+    def __init__(self, *args, **kwargs):
+        super(ResponseForm, self).__init__(auto_id=False, *args, **kwargs)
+    
     class Meta:
         model = Wish
         fields = ('status', 'status_message')        

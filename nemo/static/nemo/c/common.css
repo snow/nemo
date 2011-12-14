@@ -84,6 +84,7 @@ form .cancel {margin-left:10px; color:#666}
     .stream_li form textarea {width:510px}
     
     .stream_li .wishform {display:none; border:none}
+        .stream_li .wishform .errorlist {margin-left:5px; font-size:12px; color:red; list-style:none}
     
     .stream_li .responseform {display:none; margin-top:10px}
         .responseform .status_select {padding-left:5px; background:#ddd}

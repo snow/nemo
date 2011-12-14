@@ -7,26 +7,15 @@
         uri_root: ''
     }
 })(jQuery);
-
-/**
- * create wish form
- * -----------------
- */
-(function($){
-    nemo.init_create_wish_form = function(j_form){
-        j_form.find('textarea').one('focus', function(){
-            j_form.removeClass('off').find('textarea').empty();
-        });
-    }
-})(jQuery);
-
 /**
  * stream
  * ----------
  */
 (function($){
     var j_stream,
-        vote_buffer = {};
+        vote_buffer = {},
+        
+        OUT_OF_VOTE_MSG = 'You need {want} votes but only got {has} left';
     
     function parse_vote_count(str){
         var matches = str.match(/\d+/);
@@ -69,10 +58,20 @@
             $.ajax(API_URI, {
                 type: 'POST',
                 data: {'count': vote_count},
+                dataType: 'html',
                 success: function(data){
                     j_link.closest('.stream_li').replaceWith(data);
                 },
-                dataType: 'html'
+                error: function(xhr){
+                    try {
+                        resp = $.parseJSON(xhr.responseText);
+                        //rcp.l(resp);
+                        alert(OUT_OF_VOTE_MSG.replace('{want}', resp.want).
+                                              replace('{has}', resp.has));
+                    } catch(err) {
+                        // TODO extractly what will happen here?
+                    }
+                },
             });
         }, 500);
     }
@@ -106,6 +105,14 @@
             data: j_form.serialize(),
             success: function(data){
                 j_form.closest('.stream_li').replaceWith(data);
+            },
+            error: function(xhr, textstatus, err){
+                if(403 === xhr.status){
+                    var j_replace = $(xhr.responseText);
+                    rcp.l(j_replace);
+                    j_form.replaceWith(j_replace);
+                    j_replace.show();
+                }
             }
         });
     }
@@ -132,6 +139,40 @@
     nemo.stream = {};
     nemo.stream.init = function(){
         j_stream = $('.stream');
+        var j_form = $('.wishform.off'),
+            j_content = j_form.find('textarea'),
+            PLACEHOLDER = j_content.attr('placeholder');
+        
+        j_content.one('focus', function(evt){
+            if(j_content.val() === PLACEHOLDER){
+                j_content.val('');
+            }
+        });
+        
+        j_content.on({
+            'focus': function(evt){
+                j_form.removeClass('off');
+            },
+            'blur': function(evt){
+                if('' === j_content.val()){
+                    j_form.addClass('off');
+                }
+            }
+        });
+        
+        j_form.on('submit', function(evt){
+            evt.preventDefault();
+            
+            $.ajax(j_form.attr('action'), {
+                type: 'POST',
+                dataType: 'html',
+                data: j_form.serialize(),
+                success: function(data){
+                    j_stream.prepend(data);
+                    j_content.val('').trigger('blur');
+                }
+            });
+        });
         
         j_stream.delegate('.ay:not(.signin), .negative:not(.signin)', 'click', 
                 function(e){
@@ -157,19 +198,5 @@
             delegate('.wishform, .responseform', 'submit', hijax_form_submit);
         
         j_stream.load(nemo.uri_root+'list/' + j_stream.attr('type') + '/');
-        
-        $('.main>.wishform').on('submit', function(evt){
-            evt.preventDefault();
-            var j_form = $(evt.target);
-            
-            $.ajax(j_form.attr('action'), {
-                type: 'POST',
-                dataType: 'html',
-                data: j_form.serialize(),
-                success: function(data){
-                    j_stream.prepend(data);
-                }
-            });
-        });
-    }    
+    };
 })(jQuery);

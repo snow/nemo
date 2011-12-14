@@ -1,0 +1,13 @@
+{% load nemo %}
+<form class="wishform {{ classes }}" 
+      action="{% nemo_root %}{% if object %}update/{{ object.id }}/{% else %}create/{% endif %}" 
+      method="POST">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.content.errors }}
+    <textarea name="content" placeholder="{{ form.content.field.initial }}">{{ form.content.value }}</textarea>
+    <input type="submit" value="submit" />
+    {% if cancel_link %}
+    <a class="cancel" href="javascript:void(0)">cancel</a>
+    {% endif %}
+</form>

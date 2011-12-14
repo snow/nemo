@@ -1,0 +1,21 @@
+{% load nemo %}
+<form class="responseform" action="{% nemo_root %}response/{{ object.id }}/" method="post">
+    {{ form.non_field_errors }}
+    {{ form.status.errors }}
+    <div class="status_select">
+        <label>status:</label>
+        <a class="read{% if object.status == object.STATUS_READ %} on{% endif %}" href="javascript:void(0)">read</a>
+        <a class="ongoing{% if object.status == object.STATUS_ONGOING %} on{% endif %}" href="javascript:void(0)">ongoing</a>
+        <a class="done{% if object.status == object.STATUS_DONE %} on{% endif %}" href="javascript:void(0)">done</a>
+    </div>
+    {{ form.status }}
+    {{ form.status_message.errors }}
+    {{ form.status_message }}
+    {% csrf_token %}
+    <div>
+        <input type="submit" value="submit" />
+        {% if cancel_link%}
+        <a class="cancel" href="javascript:void(0)">cancel</a>
+        {% endif %}
+    </div>
+</form>
