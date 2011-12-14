@@ -157,5 +157,19 @@
             delegate('.wishform, .responseform', 'submit', hijax_form_submit);
         
         j_stream.load(nemo.uri_root+'list/' + j_stream.attr('type') + '/');
+        
+        $('.main>.wishform').on('submit', function(evt){
+            evt.preventDefault();
+            var j_form = $(evt.target);
+            
+            $.ajax(j_form.attr('action'), {
+                type: 'POST',
+                dataType: 'html',
+                data: j_form.serialize(),
+                success: function(data){
+                    j_stream.prepend(data);
+                }
+            });
+        });
     }    
 })(jQuery);

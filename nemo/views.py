@@ -42,18 +42,27 @@ class IndexV(gv.TemplateView):
         kwargs['stream_type'] = stream_type or 'hot'
         return super(IndexV, self).get(request, *args, **kwargs)
         
-class CreateV(gv.CreateView):    
+class CreateV(RedirectMixin, gv.CreateView):    
     '''Create a wish'''    
     form_class = nemo.WishForm
     template_name = 'nemo/create.html'
-    success_url = settings.NEMO_URI_ROOT + 'all/'
-
+    
     def form_valid(self, form):
         '''override to set author'''
-        wish = form.instance
-        wish.author = self.request.user
-
-        return super(CreateV, self).form_valid(form)
+        form.instance.author = self.request.user
+        self.object = form.save()
+        
+        if self.request.is_ajax():
+            self.success_url = self.get_html_chunk_uri()
+        else:
+            self.success_url = settings.NEMO_URI_ROOT + 'all/'
+            
+        return HttpResponseRedirect(self.success_url)        
+        
+#        wish = form.instance
+#        wish.author = self.request.user
+#
+#        return super(CreateV, self).form_valid(form)
     
 class UpdateV(RedirectMixin, gv.UpdateView):
     '''update wish content'''    
