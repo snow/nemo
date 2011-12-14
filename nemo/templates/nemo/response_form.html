@@ -1,4 +1,4 @@
-{% load nemo %}
+{% load nemo_tags %}
 <form class="responseform" action="{% nemo_root %}response/{{ object.id }}/" method="post">
     {{ form.non_field_errors }}
     {{ form.status.errors }}

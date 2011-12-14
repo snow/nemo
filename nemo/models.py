@@ -20,16 +20,16 @@ class UserProfileManager(models.Manager):
 # Create your models here.
 class UserProfile(models.Model):
     '''TODO'''
-    user = models.ForeignKey(User, unique=True)
+    user = models.ForeignKey(User, unique=True, related_name='nemo_user_profile_set')
     VOTE_LIMIT = 10
     
     objects = UserProfileManager()
     
-    def username(self):
-        '''TODO'''
-        return self.user.username
+#    def username(self):
+#        '''TODO'''
+#        return self.user.username
     
-    def vote_left(self):
+    def votes_left(self):
         '''TODO'''
         return self.VOTE_LIMIT - \
             sum([abs(vote.count) 
@@ -49,8 +49,8 @@ class UserProfile(models.Model):
         except Vote.DoesNotExist:
             vote = Vote(wish=wish, user=self.user)
             
-        if (abs(count) - abs(vote.count)) > self.vote_left():
-            raise self.OutOfVoteException(has=self.vote_left(), want=count, 
+        if (abs(count) - abs(vote.count)) > self.votes_left():
+            raise self.OutOfVoteException(has=self.votes_left(), want=count, 
                                           origin=vote.count)
         vote.count = count
         vote.save()

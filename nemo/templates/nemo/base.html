@@ -1,19 +1,19 @@
-<!DOCTYPE html>{% load nemo %}
+<!DOCTYPE html>{% load nemo_tags %}
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="zh_cn" />
     <title>{% block title %}{% project_name %}{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}common/c/reset.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}nemo/c/reset.css" />
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}nemo/c/common.css?r=0.1.5" />
     {% if debug %}    
-    <script src="{{ STATIC_URL }}common/s/jquery-1.7.1.min.js"></script>
+    <script src="{{ STATIC_URL }}nemo/s/jquery-1.7.1.min.js"></script>
     {% else %}    
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     {% endif %}
-    <script type="text/javascript" src="{{ STATIC_URL }}common/s/jquery.cookie.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}common/s/rcp.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}common/s/rcp.django.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}nemo/s/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}nemo/s/rcp.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}nemo/s/rcp.django.js"></script>
     <script src="{{ STATIC_URL }}nemo/s/common.js?r=0.1.5"></script>
     <script>nemo.uri_root = "{% nemo_root %}"</script>
 </head>
@@ -54,7 +54,7 @@
                     {% block sidebar %}
                         {% if request.user.is_authenticated %}
                         <div>{{ request.user.username }}</div>
-                        <div>{{ request.user.userprofile_set.get.vote_left }}</div> 
+                        <div>{% user_votes_left request.user %}</div> 
                         {% endif %}
                     {% endblock %}
                 </div>

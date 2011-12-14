@@ -1,8 +1,8 @@
 {% extends 'nemo/base.html' %}
-{% load nemo %}
+{% load nemo_tags %}
 
 {% block logo %}{% endblock %}
-{% block page_title %}{% project_name %}{% endblock %}
+{% block page_title %}<a href="/" target="_blank">{% project_name %}</a>{% endblock %}
 {% block page_id %}index{% endblock %}
 
 {% block main %}

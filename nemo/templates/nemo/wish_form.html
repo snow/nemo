@@ -1,4 +1,4 @@
-{% load nemo %}
+{% load nemo_tags %}
 <form class="wishform {{ classes }}" 
       action="{% nemo_root %}{% if object %}update/{{ object.id }}/{% else %}create/{% endif %}" 
       method="POST">
