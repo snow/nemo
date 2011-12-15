@@ -30,7 +30,17 @@ class RedirectMixin():
         else:
             self.success_url = self.get_back_uri()
             
-        return self.success_url    
+        return self.success_url
+    
+    def get_unauthenticated_response(self, format='json'):
+        go_to = settings.LOGIN_URL
+        
+        if 'json' == format:
+            return HttpResponse(json.dumps(dict(signin_uri=go_to)),
+                                status=401,
+                                content_type='application/json')
+        else:
+            return HttpResponseRedirect(go_to)
 
 class IndexV(gv.TemplateView):
     '''Render index'''
@@ -89,8 +99,11 @@ class CreateV(RedirectMixin, gv.CreateView):
         if not request.is_ajax():
             self.template_name = 'nemo/create.html'
         # else use default wish_form.html
-            
-        return super(CreateV, self).dispatch(request, *args, **kwargs)
+        
+        if request.user.is_authenticated():
+            return super(CreateV, self).dispatch(request, *args, **kwargs)
+        else:
+            return self.get_unauthenticated_response()
     
     def form_valid(self, form):
         '''override to set author'''
@@ -115,6 +128,9 @@ class VoteV(RedirectMixin, gv.View):
     '''TODO'''
     def post(self, request, pk, *args, **kwargs):
         '''TODO'''
+        if not request.user.is_authenticated():
+            return self.get_unauthenticated_response()
+        
         user = nemo.UserProfile.objects.get_by_user(request.user)
         wish = nemo.Wish.objects.get(pk=pk)
         try:
@@ -136,7 +152,7 @@ class UpdateV(RedirectMixin, gv.UpdateView):
         if not request.is_ajax():
             self.template_name = 'nemo/create.html'
         # else use default wish_form.html
-            
+        
         return super(UpdateV, self).dispatch(request, *args, **kwargs)
     
     def form_invalid(self, form):

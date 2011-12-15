@@ -3,18 +3,13 @@
 {% for e in object_list %}
 <div class="li stream_li" sid="{{ e.id }}">
     <div class="ayes">
-        {% if request.user.is_authenticated %}
         <a class="ay{% if e.count_user_ayes %} on{% endif %}" 
-           href="{% nemo_root %}ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}+{% endif %}</a>
-        {% else %}
-        <a class="ay signin" href="/accounts/login/">+</a>
-        {% endif %}
+           href="{% nemo_root %}ay/{{ e.id }}/"
+           >{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}+{% endif %}</a>
         <div class="count">{{ e.count_votes }}</div>
-        {% if request.user.is_authenticated %}
-        <a class="negative{% if e.count_user_negatives %} on{% endif %}" href="{% nemo_root %}negative/{{ e.id }}/">{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}-{% endif %}</a>
-        {% else %}
-        <a class="negative signin" href="/accounts/login/">-</a>
-        {% endif %}
+        <a class="negative{% if e.count_user_negatives %} on{% endif %}" 
+            href="{% nemo_root %}negative/{{ e.id }}/"
+            >{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}-{% endif %}</a>        
     </div>
     
     <div class="content{% if e.author == request.user %} editable{% endif %}">{{ e.content }}</div>

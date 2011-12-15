@@ -9,11 +9,11 @@ import nemo.views as nv
 urlpatterns = patterns('',
     #url(r'^$', nv.IndexV.as_view()),
     url(r'^(?P<stream_type>hot|top|all|done)?/?$', nv.IndexV.as_view()),
-    url(r'^create/$', login_required(nv.CreateV.as_view())),
+    url(r'^create/$', nv.CreateV.as_view()),
     url(r'^update/(?P<pk>\d+)/$', login_required(nv.UpdateV.as_view())),
     url(r'^response/(?P<pk>\d+)/$', 
         permission_required('nemo.response_wish')(nv.ResponseV.as_view())),
     url(r'^list/(?P<stream_type>hot|top|all|done)/(since)?(?P<since>\d+)?/?(till)?(?P<till>\d+)?/?$', nv.ListV.as_view()),
-    url(r'^vote/(?P<pk>\d+)/$', login_required(nv.VoteV.as_view())),
+    url(r'^vote/(?P<pk>\d+)/$', nv.VoteV.as_view()),
     url(r'^votes_left/$', login_required(nv.VotesLeftV.as_view())),
 )

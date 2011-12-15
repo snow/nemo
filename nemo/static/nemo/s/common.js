@@ -69,8 +69,17 @@
                     try {
                         resp = $.parseJSON(xhr.responseText);
                         //rcp.l(resp);
-                        alert(OUT_OF_VOTE_MSG.replace('{want}', resp.want).
+                        switch(xhr.status){
+                        case 403:
+                            alert(OUT_OF_VOTE_MSG.replace('{want}', resp.want).
                                               replace('{has}', resp.has));
+                            break;
+                        case 401:
+                            if(confirm('please signin first.\n'+
+                                        'go to signin page now?')){
+                                location = resp.signin_uri;
+                            }
+                        }
                     } catch(err) {
                         // TODO extractly what will happen here?
                     }
@@ -110,11 +119,24 @@
                 j_form.closest('.stream_li').replaceWith(data);
             },
             error: function(xhr, textstatus, err){
-                if(403 === xhr.status){
-                    var j_replace = $(xhr.responseText);
-                    rcp.l(j_replace);
-                    j_form.replaceWith(j_replace);
-                    j_replace.show();
+                try {
+                    resp = $.parseJSON(xhr.responseText);
+                    //rcp.l(resp);
+                    switch(xhr.status){
+                    case 403:
+                        var j_replace = $(xhr.responseText);
+                        // rcp.l(j_replace);
+                        j_form.replaceWith(j_replace);
+                        j_replace.show();
+                        break;
+                    case 401:
+                        if(confirm('please signin first.\n'+
+                                    'go to signin page now?')){
+                            location = resp.signin_uri;
+                        }
+                    }
+                } catch(err) {
+                    // TODO extractly what will happen here?
                 }
             }
         });
@@ -173,6 +195,21 @@
                 success: function(data){
                     j_stream.prepend(data);
                     j_content.val('').trigger('blur');
+                },
+                error: function(xhr, textstatus, err){
+                    try {
+                        resp = $.parseJSON(xhr.responseText);
+                        //rcp.l(resp);
+                        switch(xhr.status){
+                        case 401:
+                            if(confirm('please signin first.\n'+
+                                        'go to signin page now?')){
+                                location = resp.signin_uri;
+                            }
+                        }
+                    } catch(err) {
+                        // TODO extractly what will happen here?
+                    }
                 }
             });
         });
@@ -183,7 +220,7 @@
             j_votesleft = $('.sidebar .votesleft .count')
         });
         
-        j_stream.on('click', '.ay:not(.signin), .negative:not(.signin)', 
+        j_stream.on('click', '.ay, .negative', 
                 function(e){
                     e.preventDefault();
                     vote($(this));
