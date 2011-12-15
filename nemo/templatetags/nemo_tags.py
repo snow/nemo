@@ -15,4 +15,4 @@ def project_name():
 
 @register.simple_tag
 def user_votes_left(user):
-    return UserProfile.objects.filter(user=user).get().votes_left()
+    return UserProfile.objects.get_by_user(user).votes_left()
