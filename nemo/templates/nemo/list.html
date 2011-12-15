@@ -1,4 +1,5 @@
 {% load nemo_tags %}
+
 {% for e in object_list %}
 <div class="li stream_li" sid="{{ e.id }}">
     <div class="ayes">
@@ -27,7 +28,7 @@
         <span class="sp">-</span>
         <span class="time">{{ e.created|timesince }}</span>
         <span class="oprts">
-            {% if perms.wishlist.response_wish %}
+            {% if perms.nemo.response_wish %}
             <a class="response" href="javascript:void(0)">response</a>
             {% endif %}
         </span>
@@ -49,7 +50,7 @@
     </div>
     {% endif %}
     
-    {% if perms.wishlist.response_wish %}
+    {% if perms.nemo.response_wish %}
     {% include 'nemo/response_form.html' with object=e form=e.response_form cancel_link=1 %}
     {% endif %}
     
