@@ -15,6 +15,8 @@
     var j_stream,
         vote_buffer = {},
         
+        E_VOTE_DONE = 'evt-nemo-vote_done',
+        
         OUT_OF_VOTE_MSG = 'You need {want} votes but only got {has} left';
     
     function parse_vote_count(str){
@@ -61,6 +63,7 @@
                 dataType: 'html',
                 success: function(data){
                     j_link.closest('.stream_li').replaceWith(data);
+                    j_stream.trigger(E_VOTE_DONE);
                 },
                 error: function(xhr){
                     try {
@@ -174,28 +177,44 @@
             });
         });
         
-        j_stream.delegate('.ay:not(.signin), .negative:not(.signin)', 'click', 
+        var j_votesleft;
+        
+        rcp.j_doc.one('ready', function(evt){
+            j_votesleft = $('.sidebar .votesleft .count')
+        });
+        
+        j_stream.on('click', '.ay:not(.signin), .negative:not(.signin)', 
                 function(e){
                     e.preventDefault();
                     vote($(this));
                 }).
-            delegate('.content.editable', 'click', function(e){
+            on('click', '.content.editable', function(e){
                 e.preventDefault();
                 edit($(this));
             }).
-            delegate('.cancel', 'click', function(e){
+            on('click', '.cancel', function(e){
                 e.preventDefault();
                 cancel_form($(this));
             }).
-            delegate('.oprts .response', 'click', function(e){
+            on('click', '.oprts .response', function(e){
                 e.preventDefault();
                 response($(this));
             }).
-            delegate('.status_select a', 'click', function(e){
+            on('click', '.status_select a', function(e){
                 e.preventDefault();
                 update_status($(this));
             }).
-            delegate('.wishform, .responseform', 'submit', hijax_form_submit);
+            on('submit', '.wishform, .responseform', hijax_form_submit).
+            on(E_VOTE_DONE, function(evt){
+                $.ajax(nemo.uri_root+'votes_left/', {
+                    dataType: 'json',
+                    success: function(data){
+                        if(data.done){
+                            j_votesleft.text(data.votes_left);
+                        }
+                    }
+                });
+            });
         
         j_stream.load(nemo.uri_root+'list/' + j_stream.attr('type') + '/');
     };

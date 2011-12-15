@@ -13,7 +13,7 @@ body {overflow-y:scroll}
 .inr.layout {width:960px; margin:0 auto}
 .main.layout {float:left; width:590px; border-right:1px solid #ccc; 
     padding:10px 10px 50px 0}
-.sidebar.layout {float:right; width:350px;}
+.sidebar.layout {float:right; padding:10px; width:330px;}
 
 .hd.layout {height:44px; line-height:44px; border-bottom:1px solid #111;
     background:#333}
@@ -44,22 +44,27 @@ body {overflow-y:scroll}
 
 form .cancel {margin-left:10px; color:#666}  
 
-.stream_li {margin-bottom:10px; padding:5px 10px 10px 60px; 
+.stream_li {margin-bottom:10px; padding:0 10px 10px 60px; 
     border-bottom:1px solid #ccc}
     
     .stream_li .ayes {float:left; margin-left:-60px; width:50px}
-    .stream_li .count {text-align:center}
-    .stream_li .ay {display:none; margin:0 auto; width:40px; 
-        border:1px solid #ccc; background:#eee; color:#666; 
-        text-align:center; text-decoration:none}
-        .stream_li .ay:hover {border-color:#666; color:#333}
+    .stream_li .count {text-align:center; font-size:1.2em}
+    .stream_li .ay,
+    .stream_li .negative {display:block; margin:0 auto; width:40px; 
+            border:1px solid #ccc; background:#eee; 
+            color:#666; font-size:0.75em; text-align:center; 
+            text-decoration:none; opacity:0}
+        .stream_li .ay:hover,
+        .stream_li .negative:hover {border-color:#666; color:#333}
         .stream_li:hover .ay,
-        .stream_li .ay.on {display:block}
+        .stream_li .ay.on,
+        .stream_li:hover .negative,
+        .stream_li .negative.on {opacity:1}
         
     .stream_li .content {white-space:pre-wrap}
         .stream_li .content.editable:hover {background:#eee; cursor:text}
         
-    .stream_li .meta {margin-top:10px; color:#777; font-size:14px}    
+    .stream_li .meta {margin-top:20px; color:#777; font-size:14px}    
         .stream_li .meta a {color:#777; text-decoration:none}
             .stream_li .meta a:hover {color:#333; background:#eee}
             .stream_li .sp {color:#aaa}
@@ -69,9 +74,6 @@ form .cancel {margin-left:10px; color:#666}
             padding:2px 8px}
             .stream_li:hover .oprts a {display:inline}
             .stream_li .oprts a:hover {border-color:#666;}
-            
-    .stream_li .negative {display:none}
-        .stream_li .negative.on {display:inline}
     
     .stream_li .status {margin-top:10px}
         .stream_li .status .hd {height:28px; line-height:28px; background:#ddd}
@@ -93,6 +95,11 @@ form .cancel {margin-left:10px; color:#666}
         .responseform .status_select .on {color:#fff; background:#333}
         .responseform [name=status] {display:none}
         .responseform textarea {padding:5px; height:6em}
+
+.sidebar {color:#666}
+.sidebar section {margin-bottom:20px}
+    .sidebar h4 {color:#333}
+    .sidebar ul {margin-left:20px;}
              
 /*
  * page specifics

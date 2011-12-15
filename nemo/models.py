@@ -151,6 +151,9 @@ class Wish(models.Model):
         permissions = (
             ('response_wish', 'could response a wish'),
         )
+        
+    def count_votes(self):
+        return sum([vote.count for vote in Vote.objects.filter(wish=self)])
     
     def count_ayes(self):
         '''TODO'''

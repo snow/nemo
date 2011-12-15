@@ -2,14 +2,18 @@
 {% for e in object_list %}
 <div class="li stream_li" sid="{{ e.id }}">
     <div class="ayes">
-        <div class="count">{{ e.ayes }}</div>
         {% if request.user.is_authenticated %}
         <a class="ay{% if e.count_user_ayes %} on{% endif %}" 
-           href="{% nemo_root %}ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}Ay{% endif %}</a>
+           href="{% nemo_root %}ay/{{ e.id }}/">{% if e.count_user_ayes %}+{{e.count_user_ayes}}{% else %}+{% endif %}</a>
         {% else %}
-        <a class="ay signin" href="/accounts/login/">Ay</a>
+        <a class="ay signin" href="/accounts/login/">+</a>
         {% endif %}
-        
+        <div class="count">{{ e.count_votes }}</div>
+        {% if request.user.is_authenticated %}
+        <a class="negative{% if e.count_user_negatives %} on{% endif %}" href="{% nemo_root %}negative/{{ e.id }}/">{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}-{% endif %}</a>
+        {% else %}
+        <a class="negative signin" href="/accounts/login/">-</a>
+        {% endif %}
     </div>
     
     <div class="content{% if e.author == request.user %} editable{% endif %}">{{ e.content }}</div>
@@ -22,15 +26,7 @@
         <span class="author" href="{% nemo_root %}user/{{ e.author.id }}/">{{ e.author.username }}</span>
         <span class="sp">-</span>
         <span class="time">{{ e.created|timesince }}</span>
-        {% if e.negatives %}<span class="sp">-</span>
-        <span class="ng">{{ e.negatives }} negatives</span>
-        {% endif %}
         <span class="oprts">
-            {% if request.user.is_authenticated %}
-            <a class="negative{% if e.count_user_negatives %} on{% endif %}" href="{% nemo_root %}negative/{{ e.id }}/">{% if e.count_user_negatives %}-{{e.count_user_negatives}}{% else %}ng{% endif %}</a>
-            {% else %}
-            <a class="negative signin" href="/accounts/login/">ng</a>
-            {% endif %}
             {% if perms.wishlist.response_wish %}
             <a class="response" href="javascript:void(0)">response</a>
             {% endif %}

@@ -51,12 +51,22 @@
                     {% endblock %}
                 </div>
                 <div class="sidebar layout">
-                    {% block sidebar %}
-                        {% if request.user.is_authenticated %}
-                        <div>{{ request.user.username }}</div>
-                        <div>{% user_votes_left request.user %}</div> 
-                        {% endif %}
-                    {% endblock %}
+                {% block sidebar %}
+                    {% if request.user.is_authenticated %}
+                    <section>
+                        <h4>{{ request.user.username }}</h4>
+                        <div class="votesleft"><span class="count">{% user_votes_left request.user %}</span> votes left</div>
+                    </section> 
+                    {% endif %}
+                    
+                    <section>
+                        <h4>Help</h4>
+                        <ul>
+                        <li>Hover a wish, links for ay and negative will show up</li>
+                        <li>Click "+" or "-" link quickly for times to change how many votes to use</li>
+                        </ul>
+                    </section>
+                {% endblock %}
                 </div>
             {% endblock %}
         </div>

@@ -175,3 +175,12 @@ class ResponseV(RedirectMixin, gv.UpdateView):
         else:
             return super(ResponseV, self).form_invalid(form)
         
+class VotesLeftV(gv.View):
+    '''Return votes left for current user'''
+    
+    def get(self, request):
+        up = nemo.UserProfile.objects.filter(user=request.user).get()
+        
+        return HttpResponse(json.dumps(dict(done=True, 
+                                            votes_left=up.votes_left())),
+                                content_type='application/json')        
